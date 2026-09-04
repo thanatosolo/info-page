@@ -6,26 +6,20 @@
 <title>InfoHub - AI金融资讯站</title>
 <style>
 :root {
-  --bg: #f5f7fa;
-  --card: #ffffff;
-  --text: #1a1a2e;
-  --text2: #6b7280;
+  --bg: #0a0a0f;
+  --bg2: #12121a;
+  --card: #1a1a2e;
+  --card-hover: #222240;
+  --text: #e5e7eb;
+  --text2: #9ca3af;
   --accent: #6366f1;
   --accent2: #8b5cf6;
-  --border: #e5e7eb;
-  --shadow: 0 4px 20px rgba(0,0,0,0.08);
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0f0f1a;
-    --card: #1a1a2e;
-    --text: #e5e7eb;
-    --text2: #9ca3af;
-    --accent: #818cf8;
-    --accent2: #a78bfa;
-    --border: #2d2d44;
-    --shadow: 0 4px 20px rgba(0,0,0,0.3);
-  }
+  --accent3: #ec4899;
+  --border: #2d2d44;
+  --success: #10b981;
+  --danger: #ef4444;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --gradient: linear-gradient(135deg, var(--accent), var(--accent2));
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -33,67 +27,164 @@ body {
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  transition: background 0.3s, color 0.3s;
+  line-height: 1.6;
 }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* Header */
 .header {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: white;
+  background: linear-gradient(180deg, rgba(99,102,241,0.15) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
   padding: 20px;
-  text-align: center;
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
 }
-.header h1 { font-size: 1.5rem; font-weight: 600; }
-.header p { font-size: 0.85rem; opacity: 0.9; margin-top: 4px; }
-.nav {
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--gradient);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 15px 20px;
-  background: var(--card);
+  font-size: 20px;
+}
+.logo h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.logo p {
+  font-size: 0.8rem;
+  color: var(--text2);
+}
+.header-stats {
+  display: flex;
+  gap: 20px;
+  font-size: 0.85rem;
+  color: var(--text2);
+}
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Navigation */
+.nav {
+  background: var(--bg2);
   border-bottom: 1px solid var(--border);
+  padding: 0 20px;
   position: sticky;
-  top: 76px;
+  top: 81px;
   z-index: 99;
-  flex-wrap: wrap;
+}
+.nav-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 0;
 }
 .nav-btn {
   padding: 8px 16px;
-  border: none;
-  background: var(--bg);
-  color: var(--text);
-  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.nav-btn:hover { background: var(--border); }
+.nav-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
 .nav-btn.active {
-  background: var(--accent);
+  background: var(--gradient);
+  border-color: transparent;
   color: white;
 }
-.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.nav-btn .count {
+  background: rgba(255,255,255,0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+/* Main Content */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
 .page { display: none; }
 .page.active { display: block; }
-.section { margin-bottom: 30px; }
+
+/* Section */
+.section {
+  margin-bottom: 40px;
+}
 .section-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid var(--accent);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
 }
 .section-title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
-.section-title span { font-size: 1.2rem; }
+.section-title .icon {
+  width: 32px;
+  height: 32px;
+  background: var(--gradient);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
 .refresh-btn {
   padding: 6px 12px;
   border: 1px solid var(--border);
@@ -102,35 +193,82 @@ body {
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.8rem;
+  transition: all 0.2s;
 }
-.refresh-btn:hover { background: var(--bg); }
+.refresh-btn:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* Cards Grid */
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
 }
+
+/* Card */
 .card {
   background: var(--card);
   border-radius: 12px;
-  padding: 15px;
-  box-shadow: var(--shadow);
+  padding: 16px;
   border: 1px solid var(--border);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s;
   cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient);
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow);
 }
+.card:hover::before {
+  opacity: 1;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.card-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.tag-ai { background: rgba(99,102,241,0.2); color: #818cf8; }
+.tag-finance { background: rgba(16,185,129,0.2); color: #34d399; }
+.tag-news { background: rgba(236,72,153,0.2); color: #f472b6; }
+.tag-anime { background: rgba(139,92,246,0.2); color: #a78bfa; }
+.tag-tech { background: rgba(59,130,246,0.2); color: #60a5fa; }
 .card-title {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
-  margin-bottom: 8px;
   line-height: 1.4;
+  margin-bottom: 8px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  flex: 1;
+  margin-right: 12px;
 }
 .card-meta {
   display: flex;
@@ -139,134 +277,286 @@ body {
   font-size: 0.8rem;
   color: var(--text2);
 }
-.card-tag {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: white;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.75rem;
+.card-source {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
-.card-source { opacity: 0.7; }
+.card-time {
+  opacity: 0.7;
+}
+
+/* Loading & Error */
 .loading {
   text-align: center;
-  padding: 40px;
+  padding: 60px;
   color: var(--text2);
 }
-.loading::after {
-  content: '...';
-  animation: dots 1.5s infinite;
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
 }
-@keyframes dots {
-  0%, 20% { content: '.'; }
-  40% { content: '..'; }
-  60%, 100% { content: '...'; }
-}
+@keyframes spin { to { transform: rotate(360deg); } }
 .error {
-  background: #fef2f2;
-  color: #dc2626;
-  padding: 15px;
-  border-radius: 8px;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: #f87171;
+  padding: 20px;
+  border-radius: 12px;
   text-align: center;
 }
-@media (prefers-color-scheme: dark) {
-  .error { background: #450a0a; color: #fca5a5; }
+
+/* Crypto Cards */
+.crypto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
 }
+.crypto-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.crypto-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.crypto-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.crypto-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.crypto-name {
+  font-weight: 600;
+}
+.crypto-symbol {
+  font-size: 0.85rem;
+  color: var(--text2);
+}
+.crypto-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.crypto-price {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.crypto-change {
+  font-size: 0.9rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+.crypto-change.up {
+  background: rgba(16,185,129,0.2);
+  color: #34d399;
+}
+.crypto-change.down {
+  background: rgba(239,68,68,0.2);
+  color: #f87171;
+}
+
+/* Music Player */
 .music-player {
   position: fixed;
   bottom: 20px;
   right: 20px;
   background: var(--card);
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: 16px;
+  padding: 16px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   z-index: 100;
+  min-width: 280px;
 }
-.music-info { font-size: 0.85rem; }
-.music-title { font-weight: 600; }
-.music-artist { font-size: 0.75rem; color: var(--text2); }
+.music-info {
+  flex: 1;
+  min-width: 0;
+}
+.music-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.music-artist {
+  font-size: 0.8rem;
+  color: var(--text2);
+}
 .music-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border: none;
-  background: var(--accent);
+  background: var(--gradient);
   color: white;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s;
 }
-.music-btn:hover { background: var(--accent2); }
+.music-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: 30px;
+  margin-top: 40px;
   padding-top: 20px;
   border-top: 1px solid var(--border);
 }
 .page-btn {
-  padding: 8px 16px;
+  padding: 10px 20px;
   border: 1px solid var(--border);
   background: var(--card);
   color: var(--text);
   border-radius: 8px;
   cursor: pointer;
+  transition: all 0.2s;
 }
-.page-btn:hover { background: var(--bg); }
-.page-btn.active {
+.page-btn:hover, .page-btn.active {
   background: var(--accent);
   color: white;
   border-color: var(--accent);
 }
-.crypto-price {
+
+/* Anime Cards */
+.anime-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.anime-card {
+  background: var(--card);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.anime-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow);
+  border-color: var(--accent);
+}
+.anime-cover {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  background: var(--bg2);
+}
+.anime-info {
+  padding: 12px;
+}
+.anime-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.anime-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text2);
+}
+.anime-rating {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border);
+  gap: 4px;
+  color: #fbbf24;
 }
-.crypto-price:last-child { border-bottom: none; }
-.crypto-name { font-weight: 600; }
-.crypto-symbol { color: var(--text2); font-size: 0.85rem; }
-.crypto-value { text-align: right; }
-.crypto-change { font-size: 0.85rem; }
-.crypto-change.up { color: #10b981; }
-.crypto-change.down { color: #ef4444; }
-@media (prefers-color-scheme: dark) {
-  .crypto-change.up { color: #34d399; }
-  .crypto-change.down { color: #f87171; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-content { flex-direction: column; gap: 16px; }
+  .cards { grid-template-columns: 1fr; }
+  .crypto-grid { grid-template-columns: 1fr; }
+  .anime-grid { grid-template-columns: repeat(2, 1fr); }
+  .music-player { 
+    left: 20px;
+    right: 20px;
+    min-width: auto;
+  }
 }
 </style>
 </head>
 <body>
-<div class="header">
-  <h1>📊 InfoHub</h1>
-  <p>AI · 金融 · 资讯 · 动漫</p>
-</div>
 
-<div class="nav">
-  <button class="nav-btn active" data-page="ai">🤖 AI资讯</button>
-  <button class="nav-btn" data-page="finance">💰 金融</button>
-  <button class="nav-btn" data-page="news">📰 新闻</button>
-  <button class="nav-btn" data-page="anime">🎌 动漫</button>
-</div>
+<header class="header">
+  <div class="header-content">
+    <div class="logo">
+      <div class="logo-icon">📊</div>
+      <div>
+        <h1>InfoHub</h1>
+        <p>AI · 金融 · 资讯 · 动漫</p>
+      </div>
+    </div>
+    <div class="header-stats">
+      <div class="stat-item">
+        <div class="stat-dot"></div>
+        <span>实时更新</span>
+      </div>
+      <div class="stat-item">
+        <span id="update-time">--:--</span>
+      </div>
+    </div>
+  </div>
+</header>
 
-<div class="container">
+<nav class="nav">
+  <div class="nav-content">
+    <button class="nav-btn active" data-page="ai">🤖 AI 资讯</button>
+    <button class="nav-btn" data-page="finance">💰 加密货币</button>
+    <button class="nav-btn" data-page="tech">💻 技术</button>
+    <button class="nav-btn" data-page="anime">🎌 动漫</button>
+  </div>
+</nav>
+
+<main class="container">
   <!-- AI Page -->
   <div class="page active" id="page-ai">
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><span>🤖</span> AI 资讯</div>
-        <button class="refresh-btn" onclick="loadAI()">刷新</button>
+        <div class="section-title">
+          <div class="icon">🤖</div>
+          AI 资讯
+        </div>
+        <button class="refresh-btn" onclick="loadAI()">⟳ 刷新</button>
       </div>
       <div class="cards" id="ai-cards">
-        <div class="loading">加载</div>
+        <div class="loading"><div class="loading-spinner"></div>加载中...</div>
       </div>
     </div>
   </div>
@@ -275,24 +565,30 @@ body {
   <div class="page" id="page-finance">
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><span>💰</span> 加密货币</div>
-        <button class="refresh-btn" onclick="loadCrypto()">刷新</button>
+        <div class="section-title">
+          <div class="icon">💰</div>
+          加密货币
+        </div>
+        <button class="refresh-btn" onclick="loadCrypto()">⟳ 刷新</button>
       </div>
-      <div id="crypto-list" style="background:var(--card);border-radius:12px;padding:15px;box-shadow:var(--shadow);">
-        <div class="loading">加载</div>
+      <div class="crypto-grid" id="crypto-cards">
+        <div class="loading"><div class="loading-spinner"></div>加载中...</div>
       </div>
     </div>
   </div>
 
-  <!-- News Page -->
-  <div class="page" id="page-news">
+  <!-- Tech Page -->
+  <div class="page" id="page-tech">
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><span>📰</span> 实时新闻</div>
-        <button class="refresh-btn" onclick="loadNews()">刷新</button>
+        <div class="section-title">
+          <div class="icon">💻</div>
+          技术热点
+        </div>
+        <button class="refresh-btn" onclick="loadTech()">⟳ 刷新</button>
       </div>
-      <div class="cards" id="news-cards">
-        <div class="loading">加载</div>
+      <div class="cards" id="tech-cards">
+        <div class="loading"><div class="loading-spinner"></div>加载中...</div>
       </div>
     </div>
   </div>
@@ -301,49 +597,47 @@ body {
   <div class="page" id="page-anime">
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><span>🎌</span> 日本动漫</div>
-        <button class="refresh-btn" onclick="loadAnime('japanese')">刷新</button>
+        <div class="section-title">
+          <div class="icon">🎌</div>
+          日本动漫
+        </div>
+        <button class="refresh-btn" onclick="loadAnime('tv')">⟳ 刷新</button>
       </div>
-      <div class="cards" id="anime-jp-cards">
-        <div class="loading">加载</div>
+      <div class="anime-grid" id="anime-tv-cards">
+        <div class="loading"><div class="loading-spinner"></div>加载中...</div>
       </div>
     </div>
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><span>🇨🇳</span> 中国国漫</div>
-        <button class="refresh-btn" onclick="loadAnime('chinese')">刷新</button>
+        <div class="section-title">
+          <div class="icon">🇨🇳</div>
+          中国国漫
+        </div>
+        <button class="refresh-btn" onclick="loadAnime('manga')">⟳ 刷新</button>
       </div>
-      <div class="cards" id="anime-cn-cards">
-        <div class="loading">加载</div>
+      <div class="anime-grid" id="anime-manga-cards">
+        <div class="loading"><div class="loading-spinner"></div>加载中...</div>
       </div>
     </div>
   </div>
-
-  <div class="pagination">
-    <button class="page-btn active" data-page="ai">首页</button>
-    <button class="page-btn" data-page="anime">动漫页</button>
-  </div>
-</div>
+</main>
 
 <!-- Music Player -->
 <div class="music-player">
   <div class="music-info">
-    <div class="music-title" id="music-title">🎵 背景音乐</div>
-    <div class="music-artist" id="music-artist">ambient</div>
+    <div class="music-title">🎵 背景音乐</div>
+    <div class="music-artist"> ambient / lofi</div>
   </div>
   <button class="music-btn" id="music-btn" onclick="toggleMusic()">▶</button>
 </div>
 
 <script>
-// Music playlist - ambient/lofi tracks
+// Music - using reliable free audio sources
 const playlist = [
-  { title: "Lofi Study", artist: "Chill beats", url: "https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" },
+  { title: "Lofi Study", artist: "Chill Hop", url: "https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" },
   { title: "Ambient Space", artist: "Cosmic", url: "https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3" },
-  { title: "Rainy Day", artist: "Nature sounds", url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" },
-  { title: "Piano Dreams", artist: "Calm", url: "https://cdn.pixabay.com/audio/2022/10/25/audio_54592140c4.mp3" },
-  { title: "Night Jazz", artist: "Smooth", url: "https://cdn.pixabay.com/audio/2022/07/04/audio_993727f416.mp3" }
+  { title: "Rainy Day", artist: "Nature", url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" }
 ];
-
 let currentTrack = 0;
 let isPlaying = false;
 let audio = new Audio();
@@ -374,99 +668,136 @@ audio.addEventListener('ended', () => {
 });
 
 // Navigation
-document.querySelectorAll('.nav-btn, .page-btn').forEach(btn => {
+document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const page = btn.dataset.page;
-    if (!page) return;
-    
-    document.querySelectorAll('.nav-btn, .page-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.nav-btn[data-page="'+page+'"], .page-btn[data-page="'+page+'"]').forEach(b => b.classList.add('active'));
-    
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-'+page).classList.add('active');
+    document.getElementById('page-' + page).classList.add('active');
   });
 });
 
-// Load AI News
+// Load AI News from TechCrunch
 async function loadAI() {
   const container = document.getElementById('ai-cards');
-  container.innerHTML = '<div class="loading">加载</div>';
+  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
   
   try {
     const res = await fetch('https://r.jina.ai/https://techcrunch.com/category/artificial-intelligence/');
     const text = await res.text();
-    const items = text.split('\n').filter(l => l.trim() && !l.startsWith('#')).slice(0, 12);
     
-    container.innerHTML = items.map((item, i) => {
-      const match = item.match(/(.+?)\s*[-–—]\s*(.+)$/);
-      if (match) {
-        return `<div class="card">
-          <div class="card-title">${match[1].trim()}</div>
-          <div class="card-meta">
-            <span class="card-tag">AI</span>
-            <span class="card-source">TechCrunch</span>
-          </div>
-        </div>`;
+    // Parse articles
+    const articles = [];
+    const lines = text.split('\n').filter(l => l.trim());
+    
+    for (const line of lines) {
+      // Look for article patterns
+      if (line.match(/^\[?[A-Z][^\]]+\]?\s*[-–—]\s*/)) {
+        const match = line.match(/^\[?([^\]]+)\]?\s*[-–—]\s*(.+)$/);
+        if (match) {
+          articles.push({
+            title: match[1].trim(),
+            desc: match[2].trim()
+          });
+        }
       }
-      return '';
-    }).filter(Boolean).join('');
-    
-    if (!container.children.length) {
-      container.innerHTML = '<div class="card"><div class="card-title">AI 资讯加载中...</div></div>';
     }
+    
+    // Fallback: create cards from text
+    if (articles.length === 0) {
+      const sentences = text.split(/[.!]+/).filter(s => s.trim().length > 30).slice(0, 12);
+      sentences.forEach(s => {
+        const clean = s.trim().replace(/^\[?[^\]]*\]?\s*/, '');
+        if (clean.length > 20) {
+          articles.push({ title: clean, desc: '' });
+        }
+      });
+    }
+    
+    container.innerHTML = articles.map(a => `
+      <div class="card">
+        <div class="card-header">
+          <span class="card-tag tag-ai">🤖 AI</span>
+        </div>
+        <div class="card-title">${a.title}</div>
+        <div class="card-meta">
+          <span class="card-source">TechCrunch</span>
+          <span class="card-time">刚刚</span>
+        </div>
+      </div>
+    `).join('') || '<div class="error">暂无内容</div>';
+    
   } catch (e) {
     container.innerHTML = '<div class="error">加载失败，请稍后重试</div>';
   }
 }
 
-// Load Crypto
+// Load Crypto Prices
 async function loadCrypto() {
-  const container = document.getElementById('crypto-list');
-  container.innerHTML = '<div class="loading">加载</div>';
+  const container = document.getElementById('crypto-cards');
+  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
   
   try {
-    const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
+    const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=12&page=1&sparkline=false');
     const data = await res.json();
     
     container.innerHTML = data.map(c => `
-      <div class="crypto-price">
-        <div>
-          <div class="crypto-name">${c.name}</div>
-          <div class="crypto-symbol">${c.symbol.toUpperCase()}</div>
+      <div class="crypto-card">
+        <div class="crypto-header">
+          <div class="crypto-icon">${c.symbol === 'btc' ? '₿' : c.symbol === 'eth' ? 'Ξ' : '◈'}</div>
+          <div>
+            <div class="crypto-name">${c.name}</div>
+            <div class="crypto-symbol">${c.symbol.toUpperCase()}</div>
+          </div>
         </div>
-        <div class="crypto-value">
-          <div>$${c.current_price?.toLocaleString()}</div>
+        <div class="crypto-body">
+          <div class="crypto-price">$${c.current_price?.toLocaleString() || '-'}</div>
           <div class="crypto-change ${c.price_change_percentage_24h >= 0 ? 'up' : 'down'}">
             ${c.price_change_percentage_24h?.toFixed(2)}%
           </div>
         </div>
       </div>
-    `).join('');
+    `).join('') || '<div class="error">暂无数据</div>';
+    
   } catch (e) {
     container.innerHTML = '<div class="error">加载失败</div>';
   }
 }
 
-// Load News
-async function loadNews() {
-  const container = document.getElementById('news-cards');
-  container.innerHTML = '<div class="loading">加载</div>';
+// Load Tech News from HackerNews
+async function loadTech() {
+  const container = document.getElementById('tech-cards');
+  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
   
   try {
-    const res = await fetch('https://r.jina.ai/https://news.google.com/rss');
-    const text = await res.text();
-    const items = text.match(/<title>(.+?)<\/title>/g) || [];
+    const res = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
+    const ids = await res.json();
     
-    container.innerHTML = items.slice(2, 14).map(title => {
-      const clean = title.replace(/<\/?title>/g, '').trim();
-      return `<div class="card">
-        <div class="card-title">${clean}</div>
-        <div class="card-meta">
-          <span class="card-tag">新闻</span>
-          <span class="card-source">Google News</span>
+    // Fetch details for top stories
+    const stories = await Promise.all(
+      ids.slice(0, 12).map(id => 
+        fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(r => r.json())
+      )
+    );
+    
+    container.innerHTML = stories.map(s => `
+      <div class="card" onclick="window.open('${s.url || 'https://news.ycombinator.com/item?id=' + s.id}', '_blank')">
+        <div class="card-header">
+          <span class="card-tag tag-tech">💻 技术</span>
+          <span class="card-meta">
+            <span>▲ ${s.score}</span>
+            <span>${s.descendants || 0} 评论</span>
+          </span>
         </div>
-      </div>`;
-    }).join('');
+        <div class="card-title">${s.title}</div>
+        <div class="card-meta">
+          <span class="card-source">${new URL(s.url).hostname || 'HackerNews'}</span>
+          <span class="card-time">${timeAgo(s.time * 1000)}</span>
+        </div>
+      </div>
+    `).join('') || '<div class="error">暂无数据</div>';
+    
   } catch (e) {
     container.innerHTML = '<div class="error">加载失败</div>';
   }
@@ -474,47 +805,68 @@ async function loadNews() {
 
 // Load Anime
 async function loadAnime(type) {
-  const containerId = type === 'japanese' ? 'anime-jp-cards' : 'anime-cn-cards';
+  const containerId = type === 'tv' ? 'anime-tv-cards' : 'anime-manga-cards';
   const container = document.getElementById(containerId);
-  container.innerHTML = '<div class="loading">加载</div>';
+  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
   
   try {
-    const res = await fetch(`https://api.kitsu.io/api/portal/anime?filter[type]=${type === 'japanese' ? 'tv' : 'comic'}&page[limit]=12`);
+    const res = await fetch(`https://api.kitsu.io/api/portal/anime?filter[type]=${type}&page[limit]=12`);
     const data = await res.json();
     
-    container.innerHTML = (data.data || []).map(a => {
-      const attrs = a.attributes || {};
-      return `<div class="card">
-        <div class="card-title">${attrs.canonicalTitle || attrs.titles?.en || attrs.title || 'Unknown'}</div>
-        <div class="card-meta">
-          <span class="card-tag">${type === 'japanese' ? '🎌' : '🇨🇳'}</span>
-          <span class="card-source">${attrs.averageRating ? Math.round(attrs.averageRating) + '⭐' : ''}</span>
-        </div>
-      </div>`;
-    }).join('') || '<div class="error">暂无数据</div>';
+    if (data.data) {
+      container.innerHTML = data.data.map(a => {
+        const attrs = a.attributes || {};
+        return `
+          <div class="anime-card">
+            <img class="anime-cover" src="${attrs.posterImage?.small || 'https://via.placeholder.com/200x280/1a1a2e/6366f1?text=Anime'}" alt="${attrs.canonicalTitle}">
+            <div class="anime-info">
+              <div class="anime-title">${attrs.canonicalTitle || attrs.titles?.en || 'Unknown'}</div>
+              <div class="anime-meta">
+                <span class="card-tag ${type === 'tv' ? 'tag-anime' : 'tag-tech'}">${type === 'tv' ? '🎌' : '🇨🇳'}</span>
+                <span class="anime-rating">⭐ ${attrs.averageRating ? Math.round(attrs.averageRating) : '-'}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="error">暂无数据</div>';
+    } else {
+      container.innerHTML = '<div class="error">暂无数据</div>';
+    }
   } catch (e) {
     container.innerHTML = '<div class="error">加载失败</div>';
   }
 }
 
-// Initial load
-loadAI();
-loadCrypto();
-loadNews();
-loadAnime('japanese');
-loadAnime('chinese');
+// Helper: Time ago
+function timeAgo(timestamp) {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if (seconds < 60) return '刚刚';
+  if (seconds < 3600) return Math.floor(seconds / 60) + '分钟前';
+  if (seconds < 86400) return Math.floor(seconds / 3600) + '小时前';
+  return Math.floor(seconds / 86400) + '天前';
+}
+
+// Update time display
+function updateTime() {
+  const now = new Date();
+  document.getElementById('update-time').textContent = 
+    now.getHours().toString().padStart(2, '0') + ':' + 
+    now.getMinutes().toString().padStart(2, '0');
+}
+setInterval(updateTime, 60000);
+updateTime();
 
 // Auto refresh
 setInterval(() => {
-  loadAI();
   loadCrypto();
-  loadNews();
-}, 15 * 60 * 1000); // 15 minutes
+}, 15 * 60 * 1000);
 
-setInterval(() => {
-  loadAnime('japanese');
-  loadAnime('chinese');
-}, 30 * 60 * 1000); // 30 minutes
+// Initial load
+loadAI();
+loadCrypto();
+loadTech();
+loadAnime('tv');
+loadAnime('manga');
 </script>
 </body>
 </html>
