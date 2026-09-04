@@ -17,9 +17,24 @@
         <p>实时资讯 & 动漫</p>
       </div>
     </div>
-    <div class="search-box">
-      <input type="text" id="search-input" placeholder="搜索资讯...">
+    
+    <div class="music-player" id="music-player">
+      <div class="music-info">
+        <div class="music-title" id="music-title">🎵 背景音乐</div>
+        <div class="music-artist" id="music-artist">加载中...</div>
+      </div>
+      <div class="music-controls">
+        <button class="music-btn-sm" onclick="prevTrack()" title="上一首">⏮</button>
+        <button class="music-btn" id="music-btn" onclick="toggleMusic()">▶</button>
+        <button class="music-btn-sm" onclick="nextTrack()" title="下一首">⏭</button>
+        <div class="volume-control">
+          <span class="volume-icon" id="volume-icon" onclick="toggleMute()">🔊</span>
+          <input type="range" id="volume-slider" min="0" max="100" value="70">
+        </div>
+      </div>
+      <div class="music-progress"><div class="music-progress-bar" id="music-progress"></div></div>
     </div>
+    
     <div class="header-stats">
       <div class="stat-item"><div class="stat-dot"></div><span>在线</span></div>
       <div id="update-time">--:--</div>
@@ -71,23 +86,6 @@
     </div>
   </div>
 </main>
-
-<div class="music-player">
-  <div class="music-info">
-    <div class="music-title" id="music-title">🎵 背景音乐</div>
-    <div class="music-artist" id="music-artist">点击播放</div>
-  </div>
-  <div class="music-controls">
-    <button class="music-btn-sm" onclick="prevTrack()" title="上一首">⏮</button>
-    <button class="music-btn" id="music-btn" onclick="toggleMusic()">▶</button>
-    <button class="music-btn-sm" onclick="nextTrack()" title="下一首">⏭</button>
-    <div class="volume-control">
-      <span class="volume-icon" id="volume-icon" onclick="toggleMute()">🔊</span>
-      <input type="range" id="volume-slider" min="0" max="100" value="70">
-    </div>
-  </div>
-  <div class="music-progress"><div class="music-progress-bar" id="music-progress"></div></div>
-</div>
 
 <button class="back-to-top" id="back-to-top" onclick="scrollToTop()">↑</button>
 

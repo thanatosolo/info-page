@@ -23,7 +23,6 @@ let isMuted = false;
 let lastVolume = 0.7;
 let audio = new Audio();
 audio.volume = 0.7;
-// 关键：请求mp3时不带Referer，绕网易云防盗链
 audio.referrerPolicy = 'no-referrer';
 
 // 音量控制
@@ -55,11 +54,10 @@ function toggleMute() {
   }
 }
 
-// 从Meting API获取网易云歌单，随机选一批；失败则降级到备用音乐
 async function initPlayer(musicConfig) {
   try {
     const res = await withTimeout(
-      fetch(`${musicConfig.api}?type=playlist&id=${musicConfig.playlistId}&server=${musicConfig.server}`),
+      fetch(`${musicConfig.api}?type=playlist&id=${musicConfig.playlistId}&server=${musicConfig.server}&_t=${Date.now()}`),
       10000
     );
     const list = await res.json();
@@ -78,7 +76,6 @@ async function initPlayer(musicConfig) {
     throw new Error('歌单为空');
   } catch (e) {
     console.warn('Meting API失败，降级到备用音乐:', e);
-    // 降级：随机选备用音乐
     const shuffled = [...FALLBACK_SONGS].sort(() => Math.random() - 0.5);
     playlist = shuffled.slice(0, 8);
     currentTrack = 0;
@@ -111,7 +108,6 @@ function playTrack() {
   audio.src = track.url;
   audio.play().catch(e => {
     console.warn('播放失败:', e);
-    // 播放失败自动跳下一首
     setTimeout(() => nextTrack(), 1000);
   });
   document.getElementById('music-title').textContent = `🎵 ${track.title}`;
@@ -159,7 +155,6 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + btn.dataset.page).classList.add('active');
     currentPage = btn.dataset.page;
-    document.getElementById('search-input').value = '';
   });
 });
 
@@ -235,20 +230,6 @@ function renderSkeleton(container, count = 6, type = 'card') {
   }
 }
 
-// ========== 全局数据存储（用于搜索） ==========
-let currentNewsItems = [];
-let currentTechItems = [];
-
-// ========== 搜索功能 ==========
-document.getElementById('search-input').addEventListener('input', function(e) {
-  const keyword = e.target.value.trim().toLowerCase();
-  if (currentPage === 'news') {
-    renderNewsCards(keyword ? currentNewsItems.filter(i => i.title.toLowerCase().includes(keyword) || i.source.toLowerCase().includes(keyword)) : currentNewsItems);
-  } else if (currentPage === 'tech') {
-    renderTechCards(keyword ? currentTechItems.filter(i => i.title.toLowerCase().includes(keyword) || i.source.toLowerCase().includes(keyword)) : currentTechItems);
-  }
-});
-
 // ========== 渲染卡片 ==========
 function renderNewsCards(items) {
   const container = document.getElementById('news-cards');
@@ -298,7 +279,7 @@ function renderTechCards(items) {
   }).join('');
 }
 
-// ========== 加载资讯 ==========
+// ========== 加载资讯（加时间戳破缓存） ==========
 async function loadNews(btn) {
   if (!CONFIG) return;
   const container = document.getElementById('news-cards');
@@ -309,7 +290,7 @@ async function loadNews(btn) {
     const allItems = [];
     for (const source of CONFIG.newsSources) {
       try {
-        const res = await withTimeout(fetch(`${CONFIG.api.rss2json}?rss_url=${encodeURIComponent(source.url)}`));
+        const res = await withTimeout(fetch(`${CONFIG.api.rss2json}?rss_url=${encodeURIComponent(source.url)}&_t=${Date.now()}`));
         const data = await res.json();
         if (data.status === 'ok' && data.items) {
           data.items.forEach(item => allItems.push({ ...item, source: source.name, icon: source.icon, sourceUrl: source.url }));
@@ -317,7 +298,6 @@ async function loadNews(btn) {
       } catch (e) { console.warn(`${source.name} 失败:`, e.message); }
     }
     if (allItems.length > 0) {
-      currentNewsItems = allItems;
       renderNewsCards(allItems);
     } else {
       throw new Error('所有源均失败');
@@ -330,7 +310,7 @@ async function loadNews(btn) {
   }
 }
 
-// ========== 加载技术 ==========
+// ========== 加载技术（加时间戳破缓存） ==========
 async function loadTech(btn) {
   if (!CONFIG) return;
   const container = document.getElementById('tech-cards');
@@ -341,7 +321,7 @@ async function loadTech(btn) {
     const allItems = [];
     for (const source of CONFIG.techSources) {
       try {
-        const res = await withTimeout(fetch(`${CONFIG.api.rss2json}?rss_url=${encodeURIComponent(source.url)}`));
+        const res = await withTimeout(fetch(`${CONFIG.api.rss2json}?rss_url=${encodeURIComponent(source.url)}&_t=${Date.now()}`));
         const data = await res.json();
         if (data.status === 'ok' && data.items) {
           data.items.forEach(item => allItems.push({ ...item, source: source.name, icon: source.icon, sourceUrl: source.url }));
@@ -349,7 +329,6 @@ async function loadTech(btn) {
       } catch (e) { console.warn(`${source.name} 失败:`, e.message); }
     }
     if (allItems.length > 0) {
-      currentTechItems = allItems;
       renderTechCards(allItems);
     } else {
       throw new Error('所有源均失败');
@@ -362,7 +341,7 @@ async function loadTech(btn) {
   }
 }
 
-// ========== 加载动漫 ==========
+// ========== 加载动漫（加时间戳破缓存） ==========
 let currentAnimeType = 'season';
 
 document.querySelectorAll('.sub-nav-btn').forEach(btn => {
@@ -383,12 +362,12 @@ async function loadAnime(btn) {
   try {
     let url = '';
     if (currentAnimeType === 'season') {
-      url = `${CONFIG.api.jikanBase}/seasons/now?limit=12`;
+      url = `${CONFIG.api.jikanBase}/seasons/now?limit=12&_t=${Date.now()}`;
     } else if (currentAnimeType === 'top') {
-      url = `${CONFIG.api.jikanBase}/top/anime?limit=12`;
+      url = `${CONFIG.api.jikanBase}/top/anime?limit=12&_t=${Date.now()}`;
     } else {
       const promises = Array(12).fill(null).map(() => 
-        withTimeout(fetch(`${CONFIG.api.jikanBase}/random/anime`), 10000)
+        withTimeout(fetch(`${CONFIG.api.jikanBase}/random/anime?_t=${Date.now()}`), 10000)
           .then(r => r.json())
           .then(d => d.data)
           .catch(() => null)
@@ -453,7 +432,7 @@ function updateTime() {
 setInterval(updateTime, 60000);
 updateTime();
 
-// ========== 初始化：加载配置后启动 ==========
+// ========== 初始化 ==========
 async function init() {
   try {
     const res = await fetch('config.json');
