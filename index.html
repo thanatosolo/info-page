@@ -331,22 +331,32 @@ async function loadNews() {
   const container = document.getElementById('news-cards');
   container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
   try {
-    const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://techcrunch.com/feed/');
-    const data = await res.json();
-    if (data.status === 'ok' && data.items) {
-      container.innerHTML = data.items.slice(0, 12).map(item => `
+    // 中文 AI/科技资讯源
+    const sources = [
+      'https://www.jiqizhixin.com/rss',  // 机器之心
+      'https://www.qbitai.com/feed',     // 量子位
+    ];
+    const results = await Promise.allSettled(sources.map(url =>
+      fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`)
+        .then(r => r.json())
+        .then(d => d.status === 'ok' ? d.items : [])
+        .catch(() => [])
+    ));
+    const items = results.flat().slice(0, 12);
+    if (items.length > 0) {
+      container.innerHTML = items.map(item => `
         <div class="card" onclick="window.open('${item.link}', '_blank')">
-          <div class="card-header"><span class="card-tag tag-news">📰</span></div>
+          <div class="card-header"><span class="card-tag tag-news">🤖</span></div>
           <div class="card-title">${item.title}</div>
-          <div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">${formatDate(item.pubDate)}</span></div>
+          <div class="card-meta"><span class="card-source">AI资讯</span><span class="card-time">${formatDate(item.pubDate)}</span></div>
         </div>
       `).join('');
     } else { throw new Error('RSS parse failed'); }
   } catch (e) {
     container.innerHTML = `
-      <div class="card"><div class="card-header"><span class="card-tag tag-news">📰</span></div><div class="card-title">科技资讯</div><div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">刚刚</span></div></div>
-      <div class="card"><div class="card-header"><span class="card-tag tag-news">📰</span></div><div class="card-title">互联网动态</div><div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">2小时前</span></div></div>
-      <div class="card"><div class="card-header"><span class="card-tag tag-news">📰</span></div><div class="card-title">科技圈新闻</div><div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">5小时前</span></div></div>
+      <div class="card"><div class="card-header"><span class="card-tag tag-news">🤖</span></div><div class="card-title">人工智能最新资讯</div><div class="card-meta"><span class="card-source">机器之心</span><span class="card-time">刚刚</span></div></div>
+      <div class="card"><div class="card-header"><span class="card-tag tag-news">🤖</span></div><div class="card-title">大模型技术突破</div><div class="card-meta"><span class="card-source">量子位</span><span class="card-time">2小时前</span></div></div>
+      <div class="card"><div class="card-header"><span class="card-tag tag-news">🤖</span></div><div class="card-title">AI应用生态动态</div><div class="card-meta"><span class="card-source">AI资讯</span><span class="card-time">5小时前</span></div></div>
     `;
   }
 }
