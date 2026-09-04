@@ -3,21 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>InfoHub - AI金融资讯站</title>
+<title>个人主页</title>
 <style>
 :root {
   --bg: #0a0a0f;
   --bg2: #12121a;
   --card: #1a1a2e;
-  --card-hover: #222240;
   --text: #e5e7eb;
   --text2: #9ca3af;
   --accent: #6366f1;
-  --accent2: #8b5cf6;
   --border: #2d2d44;
   --success: #10b981;
   --shadow: 0 4px 24px rgba(0,0,0,0.4);
-  --gradient: linear-gradient(135deg, var(--accent), var(--accent2));
+  --gradient: linear-gradient(135deg, var(--accent), #8b5cf6);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -30,7 +28,6 @@ body {
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg2); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-
 .header {
   background: linear-gradient(180deg, rgba(99,102,241,0.15) 0%, transparent 100%);
   border-bottom: 1px solid var(--border);
@@ -69,7 +66,6 @@ body {
   animation: pulse 2s infinite;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-
 .nav {
   background: var(--bg2);
   border-bottom: 1px solid var(--border);
@@ -99,11 +95,9 @@ body {
 }
 .nav-btn:hover { border-color: var(--accent); color: var(--text); }
 .nav-btn.active { background: var(--gradient); border-color: transparent; color: white; }
-
 .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
 .page { display: none; }
 .page.active { display: block; }
-
 .section { margin-bottom: 40px; }
 .section-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -132,7 +126,6 @@ body {
   transition: all 0.2s;
 }
 .refresh-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
-
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 .card {
   background: var(--card);
@@ -149,8 +142,7 @@ body {
   padding: 4px 10px; border-radius: 20px;
   font-size: 0.75rem; font-weight: 500;
 }
-.tag-ai { background: rgba(99,102,241,0.2); color: #818cf8; }
-.tag-finance { background: rgba(16,185,129,0.2); color: #34d399; }
+.tag-news { background: rgba(99,102,241,0.2); color: #818cf8; }
 .tag-tech { background: rgba(59,130,246,0.2); color: #60a5fa; }
 .tag-anime { background: rgba(139,92,246,0.2); color: #a78bfa; }
 .card-title {
@@ -161,7 +153,6 @@ body {
 }
 .card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text2); }
 .card-source { display: flex; align-items: center; gap: 4px; }
-
 .loading { text-align: center; padding: 40px; color: var(--text2); }
 .loading-spinner {
   width: 32px; height: 32px;
@@ -172,7 +163,6 @@ body {
   margin: 0 auto 12px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-
 .error {
   background: rgba(239,68,68,0.1);
   border: 1px solid rgba(239,68,68,0.3);
@@ -181,35 +171,6 @@ body {
   border-radius: 8px;
   text-align: center;
 }
-
-.crypto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
-.crypto-card {
-  background: var(--card);
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  transition: all 0.3s;
-}
-.crypto-card:hover { border-color: var(--accent); transform: translateY(-2px); }
-.crypto-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.crypto-icon {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: var(--gradient);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
-}
-.crypto-name { font-weight: 600; }
-.crypto-symbol { font-size: 0.85rem; color: var(--text2); }
-.crypto-body { display: flex; justify-content: space-between; align-items: flex-end; }
-.crypto-price { font-size: 1.2rem; font-weight: 700; }
-.crypto-change {
-  font-size: 0.85rem; padding: 4px 8px;
-  border-radius: 6px;
-}
-.crypto-change.up { background: rgba(16,185,129,0.2); color: #34d399; }
-.crypto-change.down { background: rgba(239,68,68,0.2); color: #f87171; }
-
 .music-player {
   position: fixed;
   bottom: 20px; right: 20px;
@@ -236,7 +197,6 @@ body {
   transition: transform 0.2s;
 }
 .music-btn:hover { transform: scale(1.1); }
-
 .anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
 .anime-card {
   background: var(--card);
@@ -261,10 +221,9 @@ body {
 }
 .anime-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text2); }
 .anime-rating { color: #fbbf24; }
-
 @media (max-width: 768px) {
   .header-content { flex-direction: column; gap: 16px; }
-  .cards, .crypto-grid { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: 1fr; }
   .anime-grid { grid-template-columns: repeat(2, 1fr); }
   .music-player { left: 20px; right: 20px; }
 }
@@ -277,8 +236,8 @@ body {
     <div class="logo">
       <div class="logo-icon">📊</div>
       <div>
-        <h1>InfoHub</h1>
-        <p>AI · 金融 · 资讯 · 动漫</p>
+        <h1>个人主页</h1>
+        <p>资讯 & 动漫</p>
       </div>
     </div>
     <div class="header-stats">
@@ -290,38 +249,27 @@ body {
 
 <nav class="nav">
   <div class="nav-content">
-    <button class="nav-btn active" data-page="ai">🤖 AI 资讯</button>
-    <button class="nav-btn" data-page="finance">💰 加密货币</button>
+    <button class="nav-btn active" data-page="news">📰 资讯</button>
     <button class="nav-btn" data-page="tech">💻 技术</button>
     <button class="nav-btn" data-page="anime">🎌 动漫</button>
   </div>
 </nav>
 
 <main class="container">
-  <div class="page active" id="page-ai">
+  <div class="page active" id="page-news">
     <div class="section">
       <div class="section-header">
-        <!-- <div class="section-title"><div class="icon">🤖</div>AI 资讯</div>
-        <button class="refresh-btn" onclick="loadAI()">⟳ 刷新</button>
+        <div class="section-title"><div class="icon">📰</div>资讯</div>
+        <button class="refresh-btn" onclick="loadNews()">⟳ 刷新</button>
       </div>
-      <div class="cards" id="ai-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
-    </div>
-  </div>
-
-  <div class="page" id="page-finance">
-    <div class="section">
-      <div class="section-header">
-        <!-- <div class="section-title"><div class="icon">💰</div>加密货币</div>
-        <button class="refresh-btn" onclick="loadCrypto()">⟳ 刷新</button>
-      </div>
-      <div class="crypto-grid" id="crypto-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
+      <div class="cards" id="news-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
     </div>
   </div>
 
   <div class="page" id="page-tech">
     <div class="section">
       <div class="section-header">
-        <!-- <div class="section-title"><div class="icon">💻</div>技术热点</div>
+        <div class="section-title"><div class="icon">💻</div>技术</div>
         <button class="refresh-btn" onclick="loadTech()">⟳ 刷新</button>
       </div>
       <div class="cards" id="tech-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
@@ -331,17 +279,10 @@ body {
   <div class="page" id="page-anime">
     <div class="section">
       <div class="section-header">
-        <!-- <div class="section-title"><div class="icon">🎌</div>日本动漫</div>
-        <button class="refresh-btn" onclick="loadAnime('top')">⟳ 刷新</button>
+        <div class="section-title"><div class="icon">🎌</div>动漫</div>
+        <button class="refresh-btn" onclick="loadAnime()">⟳ 刷新</button>
       </div>
-      <div class="anime-grid" id="anime-top-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
-    </div>
-    <div class="section">
-      <div class="section-header">
-        <!-- <div class="section-title"><div class="icon">🇨🇳</div>中国国漫</div>
-        <button class="refresh-btn" onclick="loadCNAnime()">⟳ 刷新</button>
-      </div>
-      <div class="anime-grid" id="anime-cn-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
+      <div class="anime-grid" id="anime-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
     </div>
   </div>
 </main>
@@ -386,83 +327,26 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   });
 });
 
-async function loadAI() {
-  const container = document.getElementById('ai-cards');
+async function loadNews() {
+  const container = document.getElementById('news-cards');
   container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
   try {
-    // Use RSS2JSON to convert TechCrunch RSS to JSON
-    const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://techcrunch.com/category/artificial-intelligence/feed/');
+    const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://techcrunch.com/feed/');
     const data = await res.json();
-    
     if (data.status === 'ok' && data.items) {
       container.innerHTML = data.items.slice(0, 12).map(item => `
         <div class="card" onclick="window.open('${item.link}', '_blank')">
-          <div class="card-header"><span class="card-tag tag-ai">🤖 AI</span></div>
+          <div class="card-header"><span class="card-tag tag-news">📰</span></div>
           <div class="card-title">${item.title}</div>
-          <div class="card-meta">
-            <span class="card-source">TechCrunch</span>
-            <span class="card-time">${formatDate(item.pubDate)}</span>
-          </div>
+          <div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">${formatDate(item.pubDate)}</span></div>
         </div>
       `).join('');
-    } else {
-      throw new Error('RSS parse failed');
-    }
+    } else { throw new Error('RSS parse failed'); }
   } catch (e) {
-    // Fallback to static content
     container.innerHTML = `
-      <div class="card">
-        <div class="card-header"><span class="card-tag tag-ai">🤖 AI</span></div>
-        <div class="card-title">OpenAI 发布 GPT-5，性能提升显著</div>
-        <div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">刚刚</span></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-tag tag-ai">🤖 AI</span></div>
-        <div class="card-title">Google DeepMind 推出新 AI 模型</div>
-        <div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">2小时前</span></div>
-      </div>
-      <div class="card">
-        <div class="card-header"><span class="card-tag tag-ai">🤖 AI</span></div>
-        <div class="card-title">Anthropic 获得 40 亿美元估值</div>
-        <div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">5小时前</span></div>
-      </div>
-    `;
-  }
-}
-
-async function loadCrypto() {
-  const container = document.getElementById('crypto-cards');
-  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
-  try {
-    const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=12&page=1&sparkline=false');
-    const data = await res.json();
-    container.innerHTML = data.map(c => `
-      <div class="crypto-card">
-        <div class="crypto-header">
-          <div class="crypto-icon">${c.symbol === 'btc' ? '₿' : c.symbol === 'eth' ? 'Ξ' : '◈'}</div>
-          <div><div class="crypto-name">${c.name}</div><div class="crypto-symbol">${c.symbol.toUpperCase()}</div></div>
-        </div>
-        <div class="crypto-body">
-          <div class="crypto-price">$${c.current_price?.toLocaleString() || '-'}</div>
-          <div class="crypto-change ${c.price_change_percentage_24h >= 0 ? 'up' : 'down'}">${c.price_change_percentage_24h?.toFixed(2)}%</div>
-        </div>
-      </div>
-    `).join('') || '<div class="error">暂无数据</div>';
-  } catch (e) {
-    // Fallback to static content
-    container.innerHTML = `
-      <div class="crypto-card">
-        <div class="crypto-header"><div class="crypto-icon">₿</div><div><div class="crypto-name">Bitcoin</div><div class="crypto-symbol">BTC</div></div></div>
-        <div class="crypto-body"><div class="crypto-price">$80,775</div><div class="crypto-change up">+3.73%</div></div>
-      </div>
-      <div class="crypto-card">
-        <div class="crypto-header"><div class="crypto-icon">Ξ</div><div><div class="crypto-name">Ethereum</div><div class="crypto-symbol">ETH</div></div></div>
-        <div class="crypto-body"><div class="crypto-price">$2,512</div><div class="crypto-change up">+4.52%</div></div>
-      </div>
-      <div class="crypto-card">
-        <div class="crypto-header"><div class="crypto-icon">◈</div><div><div class="crypto-name">Tether</div><div class="crypto-symbol">USDT</div></div></div>
-        <div class="crypto-body"><div class="crypto-price">$1.00</div><div class="crypto-change up">+0.02%</div></div>
-      </div>
+      <div class="card"><div class="card-header"><span class="card-tag tag-news">📰</span></div><div class="card-title">科技资讯</div><div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">刚刚</span></div></div>
+      <div class="card"><div class="card-header"><span class="card-tag tag-news">📰</span></div><div class="card-title">互联网动态</div><div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">2小时前</span></div></div>
+      <div class="card"><div class="card-header"><span class="card-tag tag-news">📰</span></div><div class="card-title">科技圈新闻</div><div class="card-meta"><span class="card-source">TechCrunch</span><span class="card-time">5小时前</span></div></div>
     `;
   }
 }
@@ -478,7 +362,7 @@ async function loadTech() {
     ));
     container.innerHTML = stories.map(s => `
       <div class="card" onclick="window.open('${s.url || 'https://news.ycombinator.com/item?id=' + s.id}', '_blank')">
-        <div class="card-header"><span class="card-tag tag-tech">💻 技术</span><span class="card-meta"><span>▲ ${s.score}</span><span>${s.descendants || 0} 评论</span></span></div>
+        <div class="card-header"><span class="card-tag tag-tech">💻</span><span class="card-meta"><span>▲ ${s.score}</span><span>${s.descendants || 0} 评论</span></span></div>
         <div class="card-title">${s.title}</div>
         <div class="card-meta"><span class="card-source">${new URL(s.url).hostname || 'HackerNews'}</span><span class="card-time">${timeAgo(s.time * 1000)}</span></div>
       </div>
@@ -488,8 +372,8 @@ async function loadTech() {
   }
 }
 
-async function loadAnime(type) {
-  const container = document.getElementById('anime-top-cards');
+async function loadAnime() {
+  const container = document.getElementById('anime-cards');
   container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
   try {
     const res = await fetch('https://api.jikan.moe/v4/top/anime?limit=12');
@@ -503,39 +387,6 @@ async function loadAnime(type) {
         </div>
       </div>
     `).join('') || '<div class="error">暂无数据</div>';
-  } catch (e) {
-    container.innerHTML = '<div class="error">加载失败</div>';
-  }
-}
-
-async function loadCNAnime() {
-  const container = document.getElementById('anime-cn-cards');
-  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
-  try {
-    const res = await fetch('https://api.jikan.moe/v4/top/anime?filter=tv&limit=12&sfw=true');
-    const data = await res.json();
-    const chinese = (data.data || []).filter(a => /Chinese|Donghua|国漫/i.test(a.title || ''));
-    if (chinese.length > 0) {
-      container.innerHTML = chinese.slice(0, 12).map(a => `
-        <div class="anime-card" onclick="window.open('${a.url}', '_blank')">
-          <img class="anime-cover" src="${a.images?.jpg?.large_image_url || 'https://via.placeholder.com/180x260/1a1a2e/6366f1?text=CN'}" alt="${a.title}">
-          <div class="anime-info">
-            <div class="anime-title">${a.title}</div>
-            <div class="anime-meta"><span class="card-tag tag-tech">🇨🇳</span><span class="anime-rating">⭐ ${a.score || '-'}</span></div>
-          </div>
-        </div>
-      `).join('');
-    } else {
-      container.innerHTML = (data.data || []).slice(0, 12).map(a => `
-        <div class="anime-card" onclick="window.open('${a.url}', '_blank')">
-          <img class="anime-cover" src="${a.images?.jpg?.large_image_url || 'https://via.placeholder.com/180x260/1a1a2e/6366f1?text=Anime'}" alt="${a.title}">
-          <div class="anime-info">
-            <div class="anime-title">${a.title}</div>
-            <div class="anime-meta"><span class="card-tag tag-anime">🎌</span><span class="anime-rating">⭐ ${a.score || '-'}</span></div>
-          </div>
-        </div>
-      `).join('');
-    }
   } catch (e) {
     container.innerHTML = '<div class="error">加载失败</div>';
   }
@@ -562,8 +413,7 @@ function updateTime() {
 setInterval(updateTime, 60000);
 updateTime();
 
-setInterval(() => { loadCrypto(); }, 15 * 60 * 1000);
-loadAI(); loadCrypto(); loadTech(); loadAnime('top'); loadCNAnime();
+loadNews(); loadTech(); loadAnime();
 </script>
 </body>
 </html>
