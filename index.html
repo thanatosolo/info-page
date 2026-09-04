@@ -6,16 +6,21 @@
 <title>个人主页</title>
 <style>
 :root {
-  --bg: #0a0a0f;
-  --bg2: #12121a;
-  --card: #1a1a2e;
-  --text: #e5e7eb;
-  --text2: #9ca3af;
-  --accent: #6366f1;
-  --border: #2d2d44;
+  --bg: #09090b;
+  --bg2: #0f0f14;
+  --card: #18181b;
+  --card-hover: #1f1f23;
+  --text: #fafafa;
+  --text2: #a1a1aa;
+  --text3: #71717a;
+  --accent: #8b5cf6;
+  --accent2: #6366f1;
+  --accent3: #ec4899;
+  --border: #27272a;
+  --border2: #3f3f46;
   --success: #10b981;
-  --shadow: 0 4px 24px rgba(0,0,0,0.4);
-  --gradient: linear-gradient(135deg, var(--accent), #8b5cf6);
+  --shadow: 0 8px 32px rgba(0,0,0,0.5);
+  --glass: rgba(24,24,27,0.8);
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -24,18 +29,21 @@ body {
   color: var(--text);
   min-height: 100vh;
   line-height: 1.6;
+  overflow-x: hidden;
 }
-::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg2); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* Header */
 .header {
-  background: linear-gradient(180deg, rgba(99,102,241,0.15) 0%, transparent 100%);
+  background: var(--glass);
+  backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
-  padding: 20px;
+  padding: 16px 24px;
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(10px);
 }
 .header-content {
   max-width: 1400px;
@@ -43,189 +51,288 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
 }
-.logo { display: flex; align-items: center; gap: 12px; }
+.logo { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .logo-icon {
-  width: 40px; height: 40px;
-  background: var(--gradient);
-  border-radius: 12px;
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--accent3));
+  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(139,92,246,0.3);
 }
-.logo h1 {
-  font-size: 1.5rem; font-weight: 700;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.logo h1 { font-size: 1.25rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.logo p { font-size: 0.75rem; color: var(--text3); }
+
+.search-box {
+  flex: 1;
+  max-width: 400px;
+  position: relative;
 }
-.logo p { font-size: 0.8rem; color: var(--text2); }
-.header-stats { display: flex; gap: 20px; font-size: 0.85rem; color: var(--text2); }
-.stat-dot {
-  width: 8px; height: 8px; border-radius: 50%;
-  background: var(--success);
-  animation: pulse 2s infinite;
+.search-box input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.2s;
 }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
+.search-box::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; opacity: 0.5; }
+
+.header-stats { display: flex; align-items: center; gap: 16px; font-size: 0.85rem; color: var(--text2); flex-shrink: 0; }
+.stat-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.7;transform:scale(1.2)} }
+
+/* Nav */
 .nav {
   background: var(--bg2);
   border-bottom: 1px solid var(--border);
-  padding: 0 20px;
+  padding: 0 24px;
   position: sticky;
-  top: 81px;
+  top: 68px;
   z-index: 99;
 }
 .nav-content {
   max-width: 1400px;
   margin: 0 auto;
-  display: flex; gap: 8px;
-  overflow-x: auto;
-  padding: 10px 0;
+  display: flex;
+  gap: 4px;
+  padding: 8px 0;
 }
 .nav-btn {
-  padding: 8px 16px;
-  border: 1px solid var(--border);
+  padding: 10px 20px;
+  border: none;
   background: transparent;
   color: var(--text2);
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s;
+  position: relative;
   white-space: nowrap;
-  display: flex; align-items: center; gap: 6px;
 }
-.nav-btn:hover { border-color: var(--accent); color: var(--text); }
-.nav-btn.active { background: var(--gradient); border-color: transparent; color: white; }
-.container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-.page { display: none; }
+.nav-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent3));
+  transition: all 0.3s;
+  transform: translateX(-50%);
+  border-radius: 1px;
+}
+.nav-btn:hover { color: var(--text); background: rgba(139,92,246,0.1); }
+.nav-btn.active { color: var(--text); background: rgba(139,92,246,0.15); }
+.nav-btn.active::after { width: 60%; }
+
+/* Container */
+.container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+.page { display: none; animation: fadeIn 0.3s ease; }
 .page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
 .section { margin-bottom: 40px; }
 .section-header {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 20px; padding-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
 }
-.section-title {
-  font-size: 1.2rem; font-weight: 600;
-  display: flex; align-items: center; gap: 10px;
-}
-.section-title .icon {
-  width: 32px; height: 32px;
-  background: var(--gradient);
-  border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-}
+.section-title { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.section-title .icon { width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent), var(--accent3)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
 .refresh-btn {
-  padding: 6px 12px;
-  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border: 1px solid var(--border2);
   background: var(--card);
   color: var(--text2);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 0.8rem;
   transition: all 0.2s;
+  display: flex; align-items: center; gap: 6px;
 }
 .refresh-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.refresh-btn.loading .refresh-icon { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
 .card {
   background: var(--card);
-  border-radius: 12px;
-  padding: 16px;
-  border: 1px solid var(--border);
-  transition: all 0.3s;
-  cursor: pointer;
-}
-.card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow); }
-.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-.card-tag {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 4px 10px; border-radius: 20px;
-  font-size: 0.75rem; font-weight: 500;
-}
-.tag-news { background: rgba(99,102,241,0.2); color: #818cf8; }
-.tag-tech { background: rgba(59,130,246,0.2); color: #60a5fa; }
-.tag-anime { background: rgba(139,92,246,0.2); color: #a78bfa; }
-.card-title {
-  font-size: 1rem; font-weight: 600;
-  line-height: 1.4; margin-bottom: 8px;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  border-radius: 16px;
   overflow: hidden;
+  border: 1px solid var(--border);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  opacity: 0;
+  animation: cardIn 0.4s ease forwards;
 }
-.card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--text2); }
-.card-source { display: flex; align-items: center; gap: 4px; }
-.loading { text-align: center; padding: 40px; color: var(--text2); }
-.loading-spinner {
-  width: 32px; height: 32px;
-  border: 3px solid var(--border);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 12px;
+.card:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: var(--shadow), 0 0 0 1px var(--accent); }
+@keyframes cardIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+.card:nth-child(6) { animation-delay: 0.3s; }
+
+.card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: linear-gradient(135deg, var(--bg2), var(--card));
+  display: block;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-.error {
-  background: rgba(239,68,68,0.1);
-  border: 1px solid rgba(239,68,68,0.3);
-  color: #f87171;
-  padding: 16px;
-  border-radius: 8px;
-  text-align: center;
+.card-image-placeholder {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, var(--accent), var(--accent3));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  opacity: 0.8;
 }
-.music-player {
-  position: fixed;
-  bottom: 20px; right: 20px;
+.card-content { padding: 16px; }
+.card-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 500; margin-bottom: 10px; }
+.tag-news { background: rgba(139,92,246,0.2); color: #a78bfa; }
+.tag-tech { background: rgba(99,102,241,0.2); color: #818cf8; }
+.tag-anime { background: rgba(236,72,153,0.2); color: #f472b6; }
+.card-title { font-size: 0.95rem; font-weight: 600; line-height: 1.4; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text3); }
+.card-source { display: flex; align-items: center; gap: 6px; }
+.card-source::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+/* Skeleton */
+.skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--card-hover) 50%, var(--card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.skeleton-card { display: flex; flex-direction: column; gap: 12px; }
+.skeleton-image { height: 160px; border-radius: 12px 12px 0 0; }
+.skeleton-line { height: 14px; border-radius: 4px; }
+.skeleton-line:nth-child(2) { width: 80%; }
+.skeleton-line:nth-child(3) { width: 60%; margin-top: 8px; }
+
+/* Anime Grid */
+.anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+.anime-card {
   background: var(--card);
   border-radius: 16px;
-  padding: 16px;
-  box-shadow: var(--shadow);
+  overflow: hidden;
   border: 1px solid var(--border);
-  display: flex; align-items: center; gap: 12px;
-  z-index: 100;
-  min-width: 260px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  opacity: 0;
+  animation: cardIn 0.4s ease forwards;
 }
+.anime-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow); border-color: var(--accent); }
+.anime-cover { width: 100%; height: 220px; object-fit: cover; background: var(--bg2); display: block; }
+.anime-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px;
+  background: linear-gradient(transparent, rgba(0,0,0,0.9));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.anime-card:hover .anime-overlay { opacity: 1; }
+.anime-info { padding: 12px; }
+.anime-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.anime-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; color: var(--text3); }
+.anime-rating { color: #fbbf24; font-weight: 600; }
+.anime-rank { position: absolute; top: 8px; left: 8px; background: rgba(0,0,0,0.7); padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; }
+
+/* Music Player */
+.music-player {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  padding: 16px 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 100;
+  min-width: 280px;
+  transition: all 0.3s;
+}
+.music-player:hover { border-color: var(--accent); }
 .music-info { flex: 1; min-width: 0; }
-.music-title { font-weight: 600; font-size: 0.9rem; }
-.music-artist { font-size: 0.8rem; color: var(--text2); }
+.music-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.music-artist { font-size: 0.75rem; color: var(--text3); }
 .music-btn {
-  width: 36px; height: 36px;
+  width: 40px;
+  height: 40px;
   border: none;
-  background: var(--gradient);
+  background: linear-gradient(135deg, var(--accent), var(--accent3));
   color: white;
   border-radius: 50%;
   cursor: pointer;
   font-size: 1rem;
-  transition: transform 0.2s;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 12px rgba(139,92,246,0.4);
 }
-.music-btn:hover { transform: scale(1.1); }
-.anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
-.anime-card {
+.music-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(139,92,246,0.5); }
+.music-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--border);
+  border-radius: 0 0 20px 20px;
+  overflow: hidden;
+}
+.music-progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); width: 0%; transition: width 0.3s; }
+
+/* Back to top */
+.back-to-top {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
   background: var(--card);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  transition: all 0.3s;
+  border: 1px solid var(--border2);
+  border-radius: 50%;
   cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s;
+  z-index: 99;
+  color: var(--text2);
+  font-size: 1.2rem;
 }
-.anime-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--accent); }
-.anime-cover {
-  width: 100%; height: 260px;
-  object-fit: cover;
-  background: var(--bg2);
-}
-.anime-info { padding: 12px; }
-.anime-title {
-  font-size: 0.9rem; font-weight: 600;
-  margin-bottom: 6px;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.anime-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text2); }
-.anime-rating { color: #fbbf24; }
+.back-to-top.show { opacity: 1; transform: translateY(0); }
+.back-to-top:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* Error */
+.error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: #f87171; padding: 24px; border-radius: 12px; text-align: center; }
+
+/* Responsive */
 @media (max-width: 768px) {
-  .header-content { flex-direction: column; gap: 16px; }
+  .header-content { flex-wrap: wrap; }
+  .search-box { order: 3; max-width: 100%; flex-basis: 100%; }
   .cards { grid-template-columns: 1fr; }
   .anime-grid { grid-template-columns: repeat(2, 1fr); }
-  .music-player { left: 20px; right: 20px; }
+  .music-player { left: 16px; right: 16px; min-width: unset; }
+  .back-to-top { right: 16px; bottom: 90px; }
 }
 </style>
 </head>
@@ -234,15 +341,18 @@ body {
 <header class="header">
   <div class="header-content">
     <div class="logo">
-      <div class="logo-icon">📊</div>
+      <div class="logo-icon">⚡</div>
       <div>
-        <h1>个人主页</h1>
-        <p>资讯 & 动漫</p>
+        <h1>资讯主页</h1>
+        <p>实时资讯 & 动漫</p>
       </div>
     </div>
+    <div class="search-box">
+      <input type="text" placeholder="搜索资讯...">
+    </div>
     <div class="header-stats">
-      <div class="stat-item"><div class="stat-dot"></div><span>实时更新</span></div>
-      <div class="stat-item" id="update-time">--:--</div>
+      <div class="stat-item"><div class="stat-dot"></div><span>在线</span></div>
+      <div id="update-time">--:--</div>
     </div>
   </div>
 </header>
@@ -259,41 +369,56 @@ body {
   <div class="page active" id="page-news">
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><div class="icon">📰</div>资讯</div>
-        <button class="refresh-btn" onclick="loadNews()">⟳ 刷新</button>
+        <div class="section-title"><span class="icon">📰</span>资讯</div>
+        <button class="refresh-btn" onclick="loadNews(this)"><span class="refresh-icon">⟳</span> 刷新</button>
       </div>
-      <div class="cards" id="news-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
+      <div class="cards" id="news-cards">
+        <div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></div>
+        <div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></div>
+        <div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></div>
+      </div>
     </div>
   </div>
 
   <div class="page" id="page-tech">
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><div class="icon">💻</div>技术</div>
-        <button class="refresh-btn" onclick="loadTech()">⟳ 刷新</button>
+        <div class="section-title"><span class="icon">💻</span>技术</div>
+        <button class="refresh-btn" onclick="loadTech(this)"><span class="refresh-icon">⟳</span> 刷新</button>
       </div>
-      <div class="cards" id="tech-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
+      <div class="cards" id="tech-cards">
+        <div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></div>
+        <div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></div>
+        <div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></div>
+      </div>
     </div>
   </div>
 
   <div class="page" id="page-anime">
     <div class="section">
       <div class="section-header">
-        <div class="section-title"><div class="icon">🎌</div>动漫</div>
-        <button class="refresh-btn" onclick="loadAnime()">⟳ 刷新</button>
+        <div class="section-title"><span class="icon">🎌</span>动漫</div>
+        <button class="refresh-btn" onclick="loadAnime(this)"><span class="refresh-icon">⟳</span> 刷新</button>
       </div>
-      <div class="anime-grid" id="anime-cards"><div class="loading"><div class="loading-spinner"></div>加载中...</div></div>
+      <div class="anime-grid" id="anime-cards">
+        <div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div></div>
+        <div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div></div>
+        <div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div></div>
+      </div>
     </div>
   </div>
 </main>
 
 <div class="music-player">
   <div class="music-info">
-    <div class="music-title">🎵 背景音乐</div>
-    <div class="music-artist">ambient / lofi</div>
+    <div class="music-title" id="music-title">🎵 背景音乐</div>
+    <div class="music-artist" id="music-artist">点击播放</div>
   </div>
   <button class="music-btn" id="music-btn" onclick="toggleMusic()">▶</button>
+  <div class="music-progress"><div class="music-progress-bar" id="music-progress"></div></div>
 </div>
+
+<button class="back-to-top" id="back-to-top" onclick="scrollToTop()">↑</button>
 
 <script>
 const playlist = [
@@ -301,40 +426,76 @@ const playlist = [
   { title: "Ambient Space", artist: "Cosmic", url: "https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3" },
   { title: "Rainy Day", artist: "Nature", url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" }
 ];
-let currentTrack = 0, isPlaying = false, audio = new Audio();
+
+// 每天随机选择音源
+const today = new Date().toDateString();
+const lastPlayedDate = localStorage.getItem('musicDate');
+let currentTrack = lastPlayedDate === today ? parseInt(localStorage.getItem('musicTrack') || '0') : Math.floor(Math.random() * playlist.length);
+let isPlaying = false;
+let audio = new Audio();
 
 function toggleMusic() {
   const btn = document.getElementById('music-btn');
-  if (isPlaying) { audio.pause(); btn.textContent = '▶'; }
-  else { playTrack(); btn.textContent = '⏸'; }
-  isPlaying = !isPlaying;
+  if (isPlaying) {
+    audio.pause();
+    btn.textContent = '▶';
+    isPlaying = false;
+  } else {
+    playTrack();
+    btn.textContent = '⏸';
+    isPlaying = true;
+  }
 }
+
 function playTrack() {
   const track = playlist[currentTrack];
-  audio.src = track.url; audio.play();
+  audio.src = track.url;
+  audio.play();
   document.getElementById('music-title').textContent = `🎵 ${track.title}`;
   document.getElementById('music-artist').textContent = track.artist;
+  localStorage.setItem('musicDate', today);
+  localStorage.setItem('musicTrack', currentTrack.toString());
 }
-audio.addEventListener('ended', () => { currentTrack = (currentTrack + 1) % playlist.length; playTrack(); });
 
+audio.addEventListener('ended', () => {
+  currentTrack = (currentTrack + 1) % playlist.length;
+  playTrack();
+  document.getElementById('music-btn').textContent = '⏸';
+});
+
+// 进度条
+audio.addEventListener('timeupdate', () => {
+  const progress = (audio.currentTime / audio.duration) * 100;
+  document.getElementById('music-progress').style.width = progress + '%';
+});
+
+// 导航
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    const page = btn.dataset.page;
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + page).classList.add('active');
+    document.getElementById('page-' + btn.dataset.page).classList.add('active');
   });
 });
 
-async function loadNews() {
+// 回到顶部
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('back-to-top');
+  btn.classList.toggle('show', window.scrollY > 300);
+});
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+// 加载函数
+async function loadNews(btn) {
   const container = document.getElementById('news-cards');
-  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
+  if (btn) btn.classList.add('loading');
+  container.innerHTML = '<div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></div>'.repeat(6);
+  
   try {
-    // 中文科技资讯源 - IT之家 + 少数派
     const sources = [
-      { url: 'https://www.ithome.com/rss/', name: 'IT之家' },
-      { url: 'https://sspai.com/feed', name: '少数派' },
+      { url: 'https://www.ithome.com/rss/', name: 'IT之家', icon: '💻' },
+      { url: 'https://sspai.com/feed', name: '少数派', icon: '✨' }
     ];
     const allItems = [];
     for (const source of sources) {
@@ -342,36 +503,37 @@ async function loadNews() {
         const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`);
         const data = await res.json();
         if (data.status === 'ok' && data.items) {
-          data.items.forEach(item => allItems.push({ ...item, source: source.name }));
+          data.items.forEach(item => allItems.push({ ...item, source: source.name, icon: source.icon }));
         }
-      } catch (e) {
-        console.warn(`Source ${source.name} failed:`, e);
-      }
+      } catch (e) { console.warn(`${source.name} 失败`); }
     }
     if (allItems.length > 0) {
-      container.innerHTML = allItems.slice(0, 12).map(item => `
-        <div class="card" onclick="window.open('${item.link}', '_blank')">
-          <div class="card-header"><span class="card-tag tag-news">📰</span></div>
-          <div class="card-title">${item.title}</div>
-          <div class="card-meta"><span class="card-source">${item.source}</span><span class="card-time">${formatDate(item.pubDate)}</span></div>
+      container.innerHTML = allItems.slice(0, 12).map((item, i) => `
+        <div class="card" onclick="window.open('${item.link}', '_blank')" style="animation-delay: ${i * 0.05}s">
+          <img class="card-image" src="${item.thumbnail || ''}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="card-image-placeholder" style="display:none">📰</div>
+          <div class="card-content">
+            <span class="card-tag tag-news">${item.icon} ${item.source}</span>
+            <div class="card-title">${item.title}</div>
+            <div class="card-meta"><span class="card-source">${item.source}</span><span>${formatDate(item.pubDate)}</span></div>
+          </div>
         </div>
       `).join('');
-    } else {
-      throw new Error('No items');
-    }
+    } else { throw new Error('No items'); }
   } catch (e) {
     container.innerHTML = '<div class="error">加载失败，请刷新重试</div>';
-  }
+  } finally { if (btn) btn.classList.remove('loading'); }
 }
 
-async function loadTech() {
+async function loadTech(btn) {
   const container = document.getElementById('tech-cards');
-  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
+  if (btn) btn.classList.add('loading');
+  container.innerHTML = '<div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line"></div></div>'.repeat(6);
+  
   try {
-    // 国内技术资讯源 - IT之家科技 + 少数派
     const sources = [
-      { url: 'https://www.ithome.com/rss/', name: 'IT之家' },
-      { url: 'https://sspai.com/feed', name: '少数派' },
+      { url: 'https://www.ithome.com/rss/', name: 'IT之家', icon: '💻' },
+      { url: 'https://sspai.com/feed', name: '少数派', icon: '✨' }
     ];
     const allItems = [];
     for (const source of sources) {
@@ -379,50 +541,55 @@ async function loadTech() {
         const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`);
         const data = await res.json();
         if (data.status === 'ok' && data.items) {
-          data.items.forEach(item => allItems.push({ ...item, source: source.name }));
+          data.items.forEach(item => allItems.push({ ...item, source: source.name, icon: source.icon }));
         }
-      } catch (e) {
-        console.warn(`Source ${source.name} failed:`, e);
-      }
+      } catch (e) { console.warn(`${source.name} 失败`); }
     }
     if (allItems.length > 0) {
-      container.innerHTML = allItems.slice(0, 12).map(item => `
-        <div class="card" onclick="window.open('${item.link}', '_blank')">
-          <div class="card-header"><span class="card-tag tag-tech">💻</span></div>
-          <div class="card-title">${item.title}</div>
-          <div class="card-meta"><span class="card-source">${item.source}</span><span class="card-time">${formatDate(item.pubDate)}</span></div>
+      container.innerHTML = allItems.slice(0, 12).map((item, i) => `
+        <div class="card" onclick="window.open('${item.link}', '_blank')" style="animation-delay: ${i * 0.05}s">
+          <img class="card-image" src="${item.thumbnail || ''}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+          <div class="card-image-placeholder" style="display:none">💻</div>
+          <div class="card-content">
+            <span class="card-tag tag-tech">${item.icon} ${item.source}</span>
+            <div class="card-title">${item.title}</div>
+            <div class="card-meta"><span class="card-source">${item.source}</span><span>${formatDate(item.pubDate)}</span></div>
+          </div>
         </div>
       `).join('');
-    } else {
-      throw new Error('No items');
-    }
+    } else { throw new Error('No items'); }
   } catch (e) {
     container.innerHTML = '<div class="error">加载失败，请刷新重试</div>';
-  }
+  } finally { if (btn) btn.classList.remove('loading'); }
 }
 
-async function loadAnime() {
+async function loadAnime(btn) {
   const container = document.getElementById('anime-cards');
-  container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
+  if (btn) btn.classList.add('loading');
+  container.innerHTML = '<div class="skeleton skeleton-card"><div class="skeleton skeleton-image"></div></div>'.repeat(6);
+  
   try {
     const res = await fetch('https://api.jikan.moe/v4/top/anime?limit=12');
     const data = await res.json();
     if (data.data && data.data.length > 0) {
-      container.innerHTML = data.data.map(a => `
-        <div class="anime-card" onclick="window.open('${a.url}', '_blank')">
-          <img class="anime-cover" src="${a.images?.jpg?.large_image_url || 'https://via.placeholder.com/180x260/1a1a2e/6366f1?text=Anime'}" alt="${a.title}">
+      container.innerHTML = data.data.map((a, i) => `
+        <div class="anime-card" onclick="window.open('${a.url}', '_blank')" style="animation-delay: ${i * 0.05}s">
+          <span class="anime-rank">#${i + 1}</span>
+          <img class="anime-cover" src="${a.images?.jpg?.large_image_url || ''}" alt="${a.title}">
+          <div class="anime-overlay">
+            <div class="anime-title">${a.title}</div>
+            <div class="anime-meta"><span>⭐ ${a.score || '-'}</span><span>${a.type || ''}</span></div>
+          </div>
           <div class="anime-info">
             <div class="anime-title">${a.title}</div>
-            <div class="anime-meta"><span class="card-tag tag-anime">🎌</span><span class="anime-rating">⭐ ${a.score || '-'}</span></div>
+            <div class="anime-meta"><span class="anime-rating">⭐ ${a.score || '-'}</span></div>
           </div>
         </div>
       `).join('');
-    } else {
-      throw new Error('No data');
-    }
+    } else { throw new Error('No data'); }
   } catch (e) {
     container.innerHTML = '<div class="error">加载失败，请刷新重试</div>';
-  }
+  } finally { if (btn) btn.classList.remove('loading'); }
 }
 
 function timeAgo(timestamp) {
@@ -435,7 +602,7 @@ function timeAgo(timestamp) {
 
 function formatDate(dateStr) {
   const date = new Date(dateStr);
-  return timeAgo(date.getTime());
+  return isNaN(date.getTime()) ? '' : timeAgo(date.getTime());
 }
 
 function updateTime() {
@@ -443,10 +610,12 @@ function updateTime() {
   document.getElementById('update-time').textContent = 
     now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
 }
+
 setInterval(updateTime, 60000);
 updateTime();
-
-loadNews(); loadTech(); loadAnime();
+loadNews();
+loadTech();
+loadAnime();
 </script>
 </body>
 </html>
