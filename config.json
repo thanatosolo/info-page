@@ -4,13 +4,14 @@
     { "url": "https://sspai.com/feed", "name": "少数派", "icon": "✨" }
   ],
   "techSources": [
-    { "url": "https://juejin.cn/rss", "name": "掘金", "icon": "⛏️" },
-    { "url": "https://segmentfault.com/feeds", "name": "SegmentFault", "icon": "🔧" },
-    { "url": "https://www.oschina.net/news/rss", "name": "开源中国", "icon": "🐧" }
+    { "url": "https://36kr.com/feed", "name": "36氪", "icon": "📈" },
+    { "url": "https://www.huxiu.com/rss/0.xml", "name": "虎嗅", "icon": "🐯" },
+    { "url": "https://www.ifanr.com/feed", "name": "爱范儿", "icon": "📱" }
   ],
   "music": {
-    "api": "https://api.uomg.com/api/rand.music",
-    "sort": "网易云热歌榜",
+    "api": "https://api.injahow.cn/meting/",
+    "playlistId": "3778678",
+    "server": "netease",
     "count": 10
   },
   "api": {

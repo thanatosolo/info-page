@@ -39,49 +39,29 @@ function toggleMute() {
   }
 }
 
-// 随机加载音乐（方案B）
+// 从Meting API获取网易云歌单，随机选一批
 async function initPlayer(musicConfig) {
   try {
-    const promises = Array(musicConfig.count).fill(null).map(() =>
-      withTimeout(
-        fetch(`${musicConfig.api}?sort=${encodeURIComponent(musicConfig.sort)}&format=json`),
-        8000
-      )
-        .then(r => r.json())
-        .then(d => {
-          if (d.code === 1 && d.data && d.data.url) {
-            return {
-              title: d.data.name || '未知歌曲',
-              artist: d.data.artistsname || '未知歌手',
-              url: d.data.url.replace(/^http:/, 'https:')
-            };
-          }
-          return null;
-        })
-        .catch(() => null)
+    const res = await withTimeout(
+      fetch(`${musicConfig.api}?type=playlist&id=${musicConfig.playlistId}&server=${musicConfig.server}`),
+      10000
     );
-    const results = await Promise.allSettled(promises);
-    playlist = results
-      .map(r => (r.status === 'fulfilled' ? r.value : null))
-      .filter(Boolean);
-    // 去重
-    const seen = new Set();
-    playlist = playlist.filter(s => {
-      if (seen.has(s.title)) return false;
-      seen.add(s.title);
-      return true;
-    });
-    playlist.sort(() => Math.random() - 0.5);
-    currentTrack = 0;
-    if (playlist.length > 0) {
+    const list = await res.json();
+    if (Array.isArray(list) && list.length > 0) {
+      list.sort(() => Math.random() - 0.5);
+      playlist = list.slice(0, musicConfig.count).map(s => ({
+        title: s.name || '未知歌曲',
+        artist: s.artist || '未知歌手',
+        url: s.url
+      }));
+      currentTrack = 0;
       document.getElementById('music-title').textContent = `🎵 ${playlist[0].title}`;
       document.getElementById('music-artist').textContent = playlist[0].artist;
     } else {
-      document.getElementById('music-title').textContent = '🎵 音乐加载失败';
-      document.getElementById('music-artist').textContent = '请刷新重试';
+      throw new Error('歌单为空');
     }
   } catch (e) {
-    console.warn('随机音乐加载失败:', e);
+    console.warn('音乐加载失败:', e);
     playlist = [];
     document.getElementById('music-title').textContent = '🎵 音乐加载失败';
     document.getElementById('music-artist').textContent = '请刷新重试';

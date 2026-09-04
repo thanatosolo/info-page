@@ -179,19 +179,25 @@ body {
 
 /* 技术页瀑布流 */
 .cards.masonry {
-  display: block;
+  display: block !important;
   column-count: 3;
   column-gap: 20px;
 }
 .cards.masonry .card {
   break-inside: avoid;
-  margin-bottom: 20px;
-  width: 100%;
-  display: inline-flex;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  margin-bottom: 20px !important;
+  width: 100% !important;
+  display: flex !important;
 }
 .cards.masonry .card-image {
-  height: auto;
+  height: auto !important;
   max-height: 400px;
+  object-fit: cover;
+}
+.cards.masonry .card-image-placeholder {
+  height: 120px !important;
 }
 @media (max-width: 1024px) {
   .cards.masonry { column-count: 2; }
