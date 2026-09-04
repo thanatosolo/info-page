@@ -1,6 +1,20 @@
 // ========== 全局配置（从config.json加载） ==========
 let CONFIG = null;
 
+// ========== 备用音乐（Meting API挂了时降级用） ==========
+const FALLBACK_SONGS = [
+  { title: "SoundHelix 1", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+  { title: "SoundHelix 2", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+  { title: "SoundHelix 3", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+  { title: "SoundHelix 4", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+  { title: "SoundHelix 5", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
+  { title: "SoundHelix 6", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" },
+  { title: "SoundHelix 7", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" },
+  { title: "SoundHelix 8", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
+  { title: "SoundHelix 9", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" },
+  { title: "SoundHelix 10", artist: "SoundHelix", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" }
+];
+
 // ========== 音乐播放器 ==========
 let playlist = [];
 let currentTrack = 0;
@@ -9,6 +23,8 @@ let isMuted = false;
 let lastVolume = 0.7;
 let audio = new Audio();
 audio.volume = 0.7;
+// 关键：请求mp3时不带Referer，绕网易云防盗链
+audio.referrerPolicy = 'no-referrer';
 
 // 音量控制
 document.getElementById('volume-slider').addEventListener('input', function(e) {
@@ -39,7 +55,7 @@ function toggleMute() {
   }
 }
 
-// 从Meting API获取网易云歌单，随机选一批
+// 从Meting API获取网易云歌单，随机选一批；失败则降级到备用音乐
 async function initPlayer(musicConfig) {
   try {
     const res = await withTimeout(
@@ -57,21 +73,24 @@ async function initPlayer(musicConfig) {
       currentTrack = 0;
       document.getElementById('music-title').textContent = `🎵 ${playlist[0].title}`;
       document.getElementById('music-artist').textContent = playlist[0].artist;
-    } else {
-      throw new Error('歌单为空');
+      return;
     }
+    throw new Error('歌单为空');
   } catch (e) {
-    console.warn('音乐加载失败:', e);
-    playlist = [];
-    document.getElementById('music-title').textContent = '🎵 音乐加载失败';
-    document.getElementById('music-artist').textContent = '请刷新重试';
+    console.warn('Meting API失败，降级到备用音乐:', e);
+    // 降级：随机选备用音乐
+    const shuffled = [...FALLBACK_SONGS].sort(() => Math.random() - 0.5);
+    playlist = shuffled.slice(0, 8);
+    currentTrack = 0;
+    document.getElementById('music-title').textContent = `🎵 ${playlist[0].title}`;
+    document.getElementById('music-artist').textContent = playlist[0].artist + '（备用）';
   }
 }
 
 function toggleMusic() {
   if (playlist.length === 0) {
-    document.getElementById('music-title').textContent = '🎵 音乐加载失败';
-    document.getElementById('music-artist').textContent = '请刷新重试';
+    document.getElementById('music-title').textContent = '🎵 音乐加载中...';
+    document.getElementById('music-artist').textContent = '请稍候再试';
     return;
   }
   const btn = document.getElementById('music-btn');
@@ -90,7 +109,11 @@ function playTrack() {
   if (!playlist.length) return;
   const track = playlist[currentTrack];
   audio.src = track.url;
-  audio.play().catch(e => console.warn('播放失败:', e));
+  audio.play().catch(e => {
+    console.warn('播放失败:', e);
+    // 播放失败自动跳下一首
+    setTimeout(() => nextTrack(), 1000);
+  });
   document.getElementById('music-title').textContent = `🎵 ${track.title}`;
   document.getElementById('music-artist').textContent = track.artist;
 }
@@ -121,6 +144,10 @@ audio.addEventListener('timeupdate', () => {
     const progress = (audio.currentTime / audio.duration) * 100;
     document.getElementById('music-progress').style.width = progress + '%';
   }
+});
+audio.addEventListener('error', () => {
+  console.warn('音频加载错误，自动下一首');
+  setTimeout(() => nextTrack(), 1500);
 });
 
 // ========== 导航 ==========
