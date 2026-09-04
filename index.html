@@ -459,9 +459,9 @@ const playlist = [
   { title: "Rainy Day", artist: "Nature", url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" }
 ];
 
-const today = new Date().toDateString();
-const lastPlayedDate = localStorage.getItem('musicDate');
-let currentTrack = lastPlayedDate === today ? parseInt(localStorage.getItem('musicTrack') || '0') : Math.floor(Math.random() * playlist.length);
+// 每次打开随机打乱播放列表
+playlist.sort(() => Math.random() - 0.5);
+let currentTrack = 0;
 let isPlaying = false;
 let audio = new Audio();
 
@@ -484,8 +484,6 @@ function playTrack() {
   audio.play().catch(e => console.warn('播放失败:', e));
   document.getElementById('music-title').textContent = `🎵 ${track.title}`;
   document.getElementById('music-artist').textContent = track.artist;
-  localStorage.setItem('musicDate', today);
-  localStorage.setItem('musicTrack', currentTrack.toString());
 }
 
 function nextTrack() {
@@ -553,7 +551,11 @@ function formatDate(dateStr) {
 }
 
 function getImage(item) {
-  return item.thumbnail || item.enclosure?.link || item.media?.thumbnail || item.media?.content?.url || '';
+  let img = item.thumbnail || item.enclosure?.link || item.media?.thumbnail || item.media?.content?.url || '';
+  if (img) return img;
+  const html = item.content || item.description || '';
+  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+  return match ? match[1] : '';
 }
 
 function withTimeout(promise, ms = 8000) {
@@ -725,8 +727,34 @@ async function loadAnime(btn) {
     } else if (currentAnimeType === 'top') {
       url = 'https://api.jikan.moe/v4/top/anime?limit=12';
     } else {
-      const randomPage = Math.floor(Math.random() * 10) + 1;
-      url = `https://api.jikan.moe/v4/top/anime?page=${randomPage}&limit=12`;
+      // 随机推荐：调用12次random/anime获取真正随机的动漫
+      const promises = Array(12).fill(null).map(() => 
+        withTimeout(fetch('https://api.jikan.moe/v4/random/anime'), 10000)
+          .then(r => r.json())
+          .then(d => d.data)
+          .catch(() => null)
+      );
+      const results = await Promise.allSettled(promises);
+      const randomList = results.map(r => r.status === 'fulfilled' ? r.value : null).filter(Boolean);
+      if (randomList.length > 0) {
+        container.innerHTML = randomList.map((a, i) => `
+          <div class="anime-card" onclick="window.open('${a.url}', '_blank')" style="animation-delay: ${i * 0.05}s">
+            <span class="anime-rank">🎲</span>
+            <img class="anime-cover" src="${a.images?.jpg?.large_image_url || ''}" alt="${a.title}" onerror="this.style.background='linear-gradient(135deg,var(--accent),var(--accent3))';">
+            <div class="anime-overlay">
+              <div class="anime-title">${a.title}</div>
+              <div class="anime-meta"><span>⭐ ${a.score || '-'}</span><span>${a.type || ''}</span></div>
+            </div>
+            <div class="anime-info">
+              <div class="anime-title">${a.title}</div>
+              <div class="anime-meta"><span class="anime-rating">⭐ ${a.score || '-'}</span></div>
+            </div>
+          </div>
+        `).join('');
+        if (btn) btn.classList.remove('loading');
+        return;
+      }
+      throw new Error('随机推荐失败');
     }
     
     const res = await withTimeout(fetch(url), 15000);
