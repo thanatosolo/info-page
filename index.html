@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InfoHub - AI金融资讯站</title>
+<style>
+:root {
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --text: #1a1a2e;
+  --text2: #6b7280;
+  --accent: #6366f1;
+  --accent2: #8b5cf6;
+  --border: #e5e7eb;
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --text: #e5e7eb;
+    --text2: #9ca3af;
+    --accent: #818cf8;
+    --accent2: #a78bfa;
+    --border: #2d2d44;
+    --shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+.header {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  padding: 20px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.header h1 { font-size: 1.5rem; font-weight: 600; }
+.header p { font-size: 0.85rem; opacity: 0.9; margin-top: 4px; }
+.nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 20px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 76px;
+  z-index: 99;
+  flex-wrap: wrap;
+}
+.nav-btn {
+  padding: 8px 16px;
+  border: none;
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.nav-btn:hover { background: var(--border); }
+.nav-btn.active {
+  background: var(--accent);
+  color: white;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+.page { display: none; }
+.page.active { display: block; }
+.section { margin-bottom: 30px; }
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--accent);
+}
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title span { font-size: 1.2rem; }
+.refresh-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text2);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+.refresh-btn:hover { background: var(--bg); }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 15px;
+}
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text2);
+}
+.card-tag {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+}
+.card-source { opacity: 0.7; }
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text2);
+}
+.loading::after {
+  content: '...';
+  animation: dots 1.5s infinite;
+}
+@keyframes dots {
+  0%, 20% { content: '.'; }
+  40% { content: '..'; }
+  60%, 100% { content: '...'; }
+}
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+@media (prefers-color-scheme: dark) {
+  .error { background: #450a0a; color: #fca5a5; }
+}
+.music-player {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 100;
+}
+.music-info { font-size: 0.85rem; }
+.music-title { font-weight: 600; }
+.music-artist { font-size: 0.75rem; color: var(--text2); }
+.music-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.music-btn:hover { background: var(--accent2); }
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.page-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.page-btn:hover { background: var(--bg); }
+.page-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.crypto-price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.crypto-price:last-child { border-bottom: none; }
+.crypto-name { font-weight: 600; }
+.crypto-symbol { color: var(--text2); font-size: 0.85rem; }
+.crypto-value { text-align: right; }
+.crypto-change { font-size: 0.85rem; }
+.crypto-change.up { color: #10b981; }
+.crypto-change.down { color: #ef4444; }
+@media (prefers-color-scheme: dark) {
+  .crypto-change.up { color: #34d399; }
+  .crypto-change.down { color: #f87171; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>📊 InfoHub</h1>
+  <p>AI · 金融 · 资讯 · 动漫</p>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" data-page="ai">🤖 AI资讯</button>
+  <button class="nav-btn" data-page="finance">💰 金融</button>
+  <button class="nav-btn" data-page="news">📰 新闻</button>
+  <button class="nav-btn" data-page="anime">🎌 动漫</button>
+</div>
+
+<div class="container">
+  <!-- AI Page -->
+  <div class="page active" id="page-ai">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span>🤖</span> AI 资讯</div>
+        <button class="refresh-btn" onclick="loadAI()">刷新</button>
+      </div>
+      <div class="cards" id="ai-cards">
+        <div class="loading">加载</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Finance Page -->
+  <div class="page" id="page-finance">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span>💰</span> 加密货币</div>
+        <button class="refresh-btn" onclick="loadCrypto()">刷新</button>
+      </div>
+      <div id="crypto-list" style="background:var(--card);border-radius:12px;padding:15px;box-shadow:var(--shadow);">
+        <div class="loading">加载</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- News Page -->
+  <div class="page" id="page-news">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span>📰</span> 实时新闻</div>
+        <button class="refresh-btn" onclick="loadNews()">刷新</button>
+      </div>
+      <div class="cards" id="news-cards">
+        <div class="loading">加载</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Anime Page -->
+  <div class="page" id="page-anime">
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span>🎌</span> 日本动漫</div>
+        <button class="refresh-btn" onclick="loadAnime('japanese')">刷新</button>
+      </div>
+      <div class="cards" id="anime-jp-cards">
+        <div class="loading">加载</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title"><span>🇨🇳</span> 中国国漫</div>
+        <button class="refresh-btn" onclick="loadAnime('chinese')">刷新</button>
+      </div>
+      <div class="cards" id="anime-cn-cards">
+        <div class="loading">加载</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination">
+    <button class="page-btn active" data-page="ai">首页</button>
+    <button class="page-btn" data-page="anime">动漫页</button>
+  </div>
+</div>
+
+<!-- Music Player -->
+<div class="music-player">
+  <div class="music-info">
+    <div class="music-title" id="music-title">🎵 背景音乐</div>
+    <div class="music-artist" id="music-artist">ambient</div>
+  </div>
+  <button class="music-btn" id="music-btn" onclick="toggleMusic()">▶</button>
+</div>
+
+<script>
+// Music playlist - ambient/lofi tracks
+const playlist = [
+  { title: "Lofi Study", artist: "Chill beats", url: "https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" },
+  { title: "Ambient Space", artist: "Cosmic", url: "https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3" },
+  { title: "Rainy Day", artist: "Nature sounds", url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" },
+  { title: "Piano Dreams", artist: "Calm", url: "https://cdn.pixabay.com/audio/2022/10/25/audio_54592140c4.mp3" },
+  { title: "Night Jazz", artist: "Smooth", url: "https://cdn.pixabay.com/audio/2022/07/04/audio_993727f416.mp3" }
+];
+
+let currentTrack = 0;
+let isPlaying = false;
+let audio = new Audio();
+
+function toggleMusic() {
+  const btn = document.getElementById('music-btn');
+  if (isPlaying) {
+    audio.pause();
+    btn.textContent = '▶';
+  } else {
+    playTrack();
+    btn.textContent = '⏸';
+  }
+  isPlaying = !isPlaying;
+}
+
+function playTrack() {
+  const track = playlist[currentTrack];
+  audio.src = track.url;
+  audio.play();
+  document.getElementById('music-title').textContent = `🎵 ${track.title}`;
+  document.getElementById('music-artist').textContent = track.artist;
+}
+
+audio.addEventListener('ended', () => {
+  currentTrack = (currentTrack + 1) % playlist.length;
+  playTrack();
+});
+
+// Navigation
+document.querySelectorAll('.nav-btn, .page-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const page = btn.dataset.page;
+    if (!page) return;
+    
+    document.querySelectorAll('.nav-btn, .page-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn[data-page="'+page+'"], .page-btn[data-page="'+page+'"]').forEach(b => b.classList.add('active'));
+    
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-'+page).classList.add('active');
+  });
+});
+
+// Load AI News
+async function loadAI() {
+  const container = document.getElementById('ai-cards');
+  container.innerHTML = '<div class="loading">加载</div>';
+  
+  try {
+    const res = await fetch('https://r.jina.ai/https://techcrunch.com/category/artificial-intelligence/');
+    const text = await res.text();
+    const items = text.split('\n').filter(l => l.trim() && !l.startsWith('#')).slice(0, 12);
+    
+    container.innerHTML = items.map((item, i) => {
+      const match = item.match(/(.+?)\s*[-–—]\s*(.+)$/);
+      if (match) {
+        return `<div class="card">
+          <div class="card-title">${match[1].trim()}</div>
+          <div class="card-meta">
+            <span class="card-tag">AI</span>
+            <span class="card-source">TechCrunch</span>
+          </div>
+        </div>`;
+      }
+      return '';
+    }).filter(Boolean).join('');
+    
+    if (!container.children.length) {
+      container.innerHTML = '<div class="card"><div class="card-title">AI 资讯加载中...</div></div>';
+    }
+  } catch (e) {
+    container.innerHTML = '<div class="error">加载失败，请稍后重试</div>';
+  }
+}
+
+// Load Crypto
+async function loadCrypto() {
+  const container = document.getElementById('crypto-list');
+  container.innerHTML = '<div class="loading">加载</div>';
+  
+  try {
+    const res = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
+    const data = await res.json();
+    
+    container.innerHTML = data.map(c => `
+      <div class="crypto-price">
+        <div>
+          <div class="crypto-name">${c.name}</div>
+          <div class="crypto-symbol">${c.symbol.toUpperCase()}</div>
+        </div>
+        <div class="crypto-value">
+          <div>$${c.current_price?.toLocaleString()}</div>
+          <div class="crypto-change ${c.price_change_percentage_24h >= 0 ? 'up' : 'down'}">
+            ${c.price_change_percentage_24h?.toFixed(2)}%
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {
+    container.innerHTML = '<div class="error">加载失败</div>';
+  }
+}
+
+// Load News
+async function loadNews() {
+  const container = document.getElementById('news-cards');
+  container.innerHTML = '<div class="loading">加载</div>';
+  
+  try {
+    const res = await fetch('https://r.jina.ai/https://news.google.com/rss');
+    const text = await res.text();
+    const items = text.match(/<title>(.+?)<\/title>/g) || [];
+    
+    container.innerHTML = items.slice(2, 14).map(title => {
+      const clean = title.replace(/<\/?title>/g, '').trim();
+      return `<div class="card">
+        <div class="card-title">${clean}</div>
+        <div class="card-meta">
+          <span class="card-tag">新闻</span>
+          <span class="card-source">Google News</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    container.innerHTML = '<div class="error">加载失败</div>';
+  }
+}
+
+// Load Anime
+async function loadAnime(type) {
+  const containerId = type === 'japanese' ? 'anime-jp-cards' : 'anime-cn-cards';
+  const container = document.getElementById(containerId);
+  container.innerHTML = '<div class="loading">加载</div>';
+  
+  try {
+    const res = await fetch(`https://api.kitsu.io/api/portal/anime?filter[type]=${type === 'japanese' ? 'tv' : 'comic'}&page[limit]=12`);
+    const data = await res.json();
+    
+    container.innerHTML = (data.data || []).map(a => {
+      const attrs = a.attributes || {};
+      return `<div class="card">
+        <div class="card-title">${attrs.canonicalTitle || attrs.titles?.en || attrs.title || 'Unknown'}</div>
+        <div class="card-meta">
+          <span class="card-tag">${type === 'japanese' ? '🎌' : '🇨🇳'}</span>
+          <span class="card-source">${attrs.averageRating ? Math.round(attrs.averageRating) + '⭐' : ''}</span>
+        </div>
+      </div>`;
+    }).join('') || '<div class="error">暂无数据</div>';
+  } catch (e) {
+    container.innerHTML = '<div class="error">加载失败</div>';
+  }
+}
+
+// Initial load
+loadAI();
+loadCrypto();
+loadNews();
+loadAnime('japanese');
+loadAnime('chinese');
+
+// Auto refresh
+setInterval(() => {
+  loadAI();
+  loadCrypto();
+  loadNews();
+}, 15 * 60 * 1000); // 15 minutes
+
+setInterval(() => {
+  loadAnime('japanese');
+  loadAnime('chinese');
+}, 30 * 60 * 1000); // 30 minutes
+</script>
+</body>
+</html>
