@@ -52,7 +52,7 @@
         <div class="section-title"><span class="icon">💻</span>技术</div>
         <button class="refresh-btn" onclick="loadTech(this)"><span class="refresh-icon">⟳</span> 刷新</button>
       </div>
-      <div class="cards" id="tech-cards"></div>
+      <div class="cards masonry" id="tech-cards"></div>
     </div>
   </div>
 
@@ -81,6 +81,10 @@
     <button class="music-btn-sm" onclick="prevTrack()" title="上一首">⏮</button>
     <button class="music-btn" id="music-btn" onclick="toggleMusic()">▶</button>
     <button class="music-btn-sm" onclick="nextTrack()" title="下一首">⏭</button>
+    <div class="volume-control">
+      <span class="volume-icon" id="volume-icon" onclick="toggleMute()">🔊</span>
+      <input type="range" id="volume-slider" min="0" max="100" value="70">
+    </div>
   </div>
   <div class="music-progress"><div class="music-progress-bar" id="music-progress"></div></div>
 </div>

@@ -5,17 +5,95 @@ let CONFIG = null;
 let playlist = [];
 let currentTrack = 0;
 let isPlaying = false;
+let isMuted = false;
+let lastVolume = 0.7;
 let audio = new Audio();
+audio.volume = 0.7;
 
-function initPlayer(songs) {
-  const hour = new Date().getHours();
-  const startIdx = hour < 12 ? 0 : Math.floor(songs.length / 2);
-  playlist = songs.slice(startIdx, startIdx + Math.ceil(songs.length / 2));
-  playlist.sort(() => Math.random() - 0.5);
-  currentTrack = 0;
+// 音量控制
+document.getElementById('volume-slider').addEventListener('input', function(e) {
+  const vol = e.target.value / 100;
+  audio.volume = vol;
+  if (vol > 0) {
+    isMuted = false;
+    lastVolume = vol;
+    document.getElementById('volume-icon').textContent = vol > 0.5 ? '🔊' : '🔉';
+  } else {
+    isMuted = true;
+    document.getElementById('volume-icon').textContent = '🔇';
+  }
+});
+
+function toggleMute() {
+  if (isMuted) {
+    audio.volume = lastVolume;
+    document.getElementById('volume-slider').value = lastVolume * 100;
+    document.getElementById('volume-icon').textContent = lastVolume > 0.5 ? '🔊' : '🔉';
+    isMuted = false;
+  } else {
+    lastVolume = audio.volume;
+    audio.volume = 0;
+    document.getElementById('volume-slider').value = 0;
+    document.getElementById('volume-icon').textContent = '🔇';
+    isMuted = true;
+  }
+}
+
+// 随机加载音乐（方案B）
+async function initPlayer(musicConfig) {
+  try {
+    const promises = Array(musicConfig.count).fill(null).map(() =>
+      withTimeout(
+        fetch(`${musicConfig.api}?sort=${encodeURIComponent(musicConfig.sort)}&format=json`),
+        8000
+      )
+        .then(r => r.json())
+        .then(d => {
+          if (d.code === 1 && d.data && d.data.url) {
+            return {
+              title: d.data.name || '未知歌曲',
+              artist: d.data.artistsname || '未知歌手',
+              url: d.data.url.replace(/^http:/, 'https:')
+            };
+          }
+          return null;
+        })
+        .catch(() => null)
+    );
+    const results = await Promise.allSettled(promises);
+    playlist = results
+      .map(r => (r.status === 'fulfilled' ? r.value : null))
+      .filter(Boolean);
+    // 去重
+    const seen = new Set();
+    playlist = playlist.filter(s => {
+      if (seen.has(s.title)) return false;
+      seen.add(s.title);
+      return true;
+    });
+    playlist.sort(() => Math.random() - 0.5);
+    currentTrack = 0;
+    if (playlist.length > 0) {
+      document.getElementById('music-title').textContent = `🎵 ${playlist[0].title}`;
+      document.getElementById('music-artist').textContent = playlist[0].artist;
+    } else {
+      document.getElementById('music-title').textContent = '🎵 音乐加载失败';
+      document.getElementById('music-artist').textContent = '请刷新重试';
+    }
+  } catch (e) {
+    console.warn('随机音乐加载失败:', e);
+    playlist = [];
+    document.getElementById('music-title').textContent = '🎵 音乐加载失败';
+    document.getElementById('music-artist').textContent = '请刷新重试';
+  }
 }
 
 function toggleMusic() {
+  if (playlist.length === 0) {
+    document.getElementById('music-title').textContent = '🎵 音乐加载失败';
+    document.getElementById('music-artist').textContent = '请刷新重试';
+    return;
+  }
   const btn = document.getElementById('music-btn');
   if (isPlaying) {
     audio.pause();
@@ -195,7 +273,7 @@ function renderTechCards(items) {
     container.innerHTML = '<div class="empty">未找到相关资讯</div>';
     return;
   }
-  container.innerHTML = items.slice(0, 12).map((item, i) => {
+  container.innerHTML = items.slice(0, 15).map((item, i) => {
     const img = getImage(item, item.sourceUrl);
     const favicon = getFavicon(item.sourceUrl);
     const displayImg = img || favicon;
@@ -373,7 +451,7 @@ async function init() {
   try {
     const res = await fetch('config.json');
     CONFIG = await res.json();
-    initPlayer(CONFIG.songs);
+    await initPlayer(CONFIG.music);
     loadNews();
     loadTech();
     loadAnime();
