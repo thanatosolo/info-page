@@ -331,33 +331,36 @@ async function loadNews() {
   const container = document.getElementById('news-cards');
   container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
   try {
-    // 中文 AI/科技资讯源
+    // 中文科技资讯源 - IT之家 + 少数派
     const sources = [
-      'https://www.jiqizhixin.com/rss',  // 机器之心
-      'https://www.qbitai.com/feed',     // 量子位
+      { url: 'https://www.ithome.com/rss/', name: 'IT之家' },
+      { url: 'https://sspai.com/feed', name: '少数派' },
     ];
-    const results = await Promise.allSettled(sources.map(url =>
-      fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`)
-        .then(r => r.json())
-        .then(d => d.status === 'ok' ? d.items : [])
-        .catch(() => [])
-    ));
-    const items = results.flat().slice(0, 12);
-    if (items.length > 0) {
-      container.innerHTML = items.map(item => `
+    const allItems = [];
+    for (const source of sources) {
+      try {
+        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`);
+        const data = await res.json();
+        if (data.status === 'ok' && data.items) {
+          data.items.forEach(item => allItems.push({ ...item, source: source.name }));
+        }
+      } catch (e) {
+        console.warn(`Source ${source.name} failed:`, e);
+      }
+    }
+    if (allItems.length > 0) {
+      container.innerHTML = allItems.slice(0, 12).map(item => `
         <div class="card" onclick="window.open('${item.link}', '_blank')">
-          <div class="card-header"><span class="card-tag tag-news">🤖</span></div>
+          <div class="card-header"><span class="card-tag tag-news">📰</span></div>
           <div class="card-title">${item.title}</div>
-          <div class="card-meta"><span class="card-source">AI资讯</span><span class="card-time">${formatDate(item.pubDate)}</span></div>
+          <div class="card-meta"><span class="card-source">${item.source}</span><span class="card-time">${formatDate(item.pubDate)}</span></div>
         </div>
       `).join('');
-    } else { throw new Error('RSS parse failed'); }
+    } else {
+      throw new Error('No items');
+    }
   } catch (e) {
-    container.innerHTML = `
-      <div class="card"><div class="card-header"><span class="card-tag tag-news">🤖</span></div><div class="card-title">人工智能最新资讯</div><div class="card-meta"><span class="card-source">机器之心</span><span class="card-time">刚刚</span></div></div>
-      <div class="card"><div class="card-header"><span class="card-tag tag-news">🤖</span></div><div class="card-title">大模型技术突破</div><div class="card-meta"><span class="card-source">量子位</span><span class="card-time">2小时前</span></div></div>
-      <div class="card"><div class="card-header"><span class="card-tag tag-news">🤖</span></div><div class="card-title">AI应用生态动态</div><div class="card-meta"><span class="card-source">AI资讯</span><span class="card-time">5小时前</span></div></div>
-    `;
+    container.innerHTML = '<div class="error">加载失败，请刷新重试</div>';
   }
 }
 
@@ -365,20 +368,36 @@ async function loadTech() {
   const container = document.getElementById('tech-cards');
   container.innerHTML = '<div class="loading"><div class="loading-spinner"></div>加载中...</div>';
   try {
-    const res = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
-    const ids = await res.json();
-    const stories = await Promise.all(ids.slice(0, 12).map(id =>
-      fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`).then(r => r.json())
-    ));
-    container.innerHTML = stories.map(s => `
-      <div class="card" onclick="window.open('${s.url || 'https://news.ycombinator.com/item?id=' + s.id}', '_blank')">
-        <div class="card-header"><span class="card-tag tag-tech">💻</span><span class="card-meta"><span>▲ ${s.score}</span><span>${s.descendants || 0} 评论</span></span></div>
-        <div class="card-title">${s.title}</div>
-        <div class="card-meta"><span class="card-source">${new URL(s.url).hostname || 'HackerNews'}</span><span class="card-time">${timeAgo(s.time * 1000)}</span></div>
-      </div>
-    `).join('') || '<div class="error">暂无数据</div>';
+    // 国内技术资讯源 - IT之家科技 + 少数派
+    const sources = [
+      { url: 'https://www.ithome.com/rss/', name: 'IT之家' },
+      { url: 'https://sspai.com/feed', name: '少数派' },
+    ];
+    const allItems = [];
+    for (const source of sources) {
+      try {
+        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`);
+        const data = await res.json();
+        if (data.status === 'ok' && data.items) {
+          data.items.forEach(item => allItems.push({ ...item, source: source.name }));
+        }
+      } catch (e) {
+        console.warn(`Source ${source.name} failed:`, e);
+      }
+    }
+    if (allItems.length > 0) {
+      container.innerHTML = allItems.slice(0, 12).map(item => `
+        <div class="card" onclick="window.open('${item.link}', '_blank')">
+          <div class="card-header"><span class="card-tag tag-tech">💻</span></div>
+          <div class="card-title">${item.title}</div>
+          <div class="card-meta"><span class="card-source">${item.source}</span><span class="card-time">${formatDate(item.pubDate)}</span></div>
+        </div>
+      `).join('');
+    } else {
+      throw new Error('No items');
+    }
   } catch (e) {
-    container.innerHTML = '<div class="error">加载失败</div>';
+    container.innerHTML = '<div class="error">加载失败，请刷新重试</div>';
   }
 }
 
@@ -388,17 +407,21 @@ async function loadAnime() {
   try {
     const res = await fetch('https://api.jikan.moe/v4/top/anime?limit=12');
     const data = await res.json();
-    container.innerHTML = (data.data || []).map(a => `
-      <div class="anime-card" onclick="window.open('${a.url}', '_blank')">
-        <img class="anime-cover" src="${a.images?.jpg?.large_image_url || 'https://via.placeholder.com/180x260/1a1a2e/6366f1?text=Anime'}" alt="${a.title}">
-        <div class="anime-info">
-          <div class="anime-title">${a.title}</div>
-          <div class="anime-meta"><span class="card-tag tag-anime">🎌</span><span class="anime-rating">⭐ ${a.score || '-'}</span></div>
+    if (data.data && data.data.length > 0) {
+      container.innerHTML = data.data.map(a => `
+        <div class="anime-card" onclick="window.open('${a.url}', '_blank')">
+          <img class="anime-cover" src="${a.images?.jpg?.large_image_url || 'https://via.placeholder.com/180x260/1a1a2e/6366f1?text=Anime'}" alt="${a.title}">
+          <div class="anime-info">
+            <div class="anime-title">${a.title}</div>
+            <div class="anime-meta"><span class="card-tag tag-anime">🎌</span><span class="anime-rating">⭐ ${a.score || '-'}</span></div>
+          </div>
         </div>
-      </div>
-    `).join('') || '<div class="error">暂无数据</div>';
+      `).join('');
+    } else {
+      throw new Error('No data');
+    }
   } catch (e) {
-    container.innerHTML = '<div class="error">加载失败</div>';
+    container.innerHTML = '<div class="error">加载失败，请刷新重试</div>';
   }
 }
 
