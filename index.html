@@ -453,13 +453,16 @@ body {
 
 <script>
 // ========== 音乐播放器 ==========
-const playlist = [
-  { title: "Lofi Study", artist: "Chill Hop", url: "https://cdn.pixabay.com/audio/2022/05/27/audio_1808fbf07a.mp3" },
-  { title: "Ambient Space", artist: "Cosmic", url: "https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a73467.mp3" },
-  { title: "Rainy Day", artist: "Nature", url: "https://cdn.pixabay.com/audio/2022/01/18/audio_d0a13f69d2.mp3" }
-];
-
-// 每次打开随机打乱播放列表
+// 16首免费音乐（SoundHelix）
+const allSongs = Array.from({length: 16}, (_, i) => ({
+  title: `SoundHelix ${i + 1}`,
+  artist: 'SoundHelix',
+  url: `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${i + 1}.mp3`
+}));
+// 半天换一批：上午(0-12点)前8首，下午(12-24点)后8首
+const hour = new Date().getHours();
+const startIdx = hour < 12 ? 0 : 8;
+let playlist = allSongs.slice(startIdx, startIdx + 8);
 playlist.sort(() => Math.random() - 0.5);
 let currentTrack = 0;
 let isPlaying = false;
@@ -550,12 +553,43 @@ function formatDate(dateStr) {
   return isNaN(date.getTime()) ? '' : timeAgo(date.getTime());
 }
 
-function getImage(item) {
-  let img = item.thumbnail || item.enclosure?.link || item.media?.thumbnail || item.media?.content?.url || '';
-  if (img) return img;
-  const html = item.content || item.description || '';
-  const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
-  return match ? match[1] : '';
+function getDomain(url) {
+  try { return new URL(url).hostname; } catch { return ''; }
+}
+
+function getFavicon(sourceUrl) {
+  const domain = getDomain(sourceUrl);
+  return domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : '';
+}
+
+function getImage(item, sourceUrl) {
+  let img = '';
+  // 1. 直接字段
+  if (item.thumbnail) img = item.thumbnail;
+  else if (item.enclosure) {
+    if (Array.isArray(item.enclosure) && item.enclosure.length > 0) img = item.enclosure[0].link || item.enclosure[0].url;
+    else if (typeof item.enclosure === 'object') img = item.enclosure.link || item.enclosure.url;
+    else img = item.enclosure;
+  }
+  else if (item.media) {
+    img = item.media.thumbnail || item.media.content?.url || item.media.url || '';
+  }
+  // 2. 从content/description提取img
+  if (!img) {
+    const html = item.content || item.description || '';
+    const match = html.match(/<img[^>]+src=["']([^"']+)["']/i);
+    if (match) img = match[1];
+  }
+  if (!img) return '';
+  // 3. 相对路径补全域名
+  if (img.startsWith('/') && sourceUrl) {
+    try { img = new URL(sourceUrl).origin + img; } catch {}
+  }
+  // 4. 用图片代理解决防盗链
+  if (img.startsWith('http')) {
+    img = 'https://images.weserv.nl/?url=' + encodeURIComponent(img.replace(/^https?:\/\//, ''));
+  }
+  return img;
 }
 
 function withTimeout(promise, ms = 8000) {
@@ -595,11 +629,13 @@ function renderNewsCards(items) {
     return;
   }
   container.innerHTML = items.slice(0, 12).map((item, i) => {
-    const img = getImage(item);
+    const img = getImage(item, item.sourceUrl);
+    const favicon = getFavicon(item.sourceUrl);
+    const displayImg = img || favicon;
     return `
       <div class="card" onclick="window.open('${item.link || '#'}', '_blank')" style="animation-delay: ${i * 0.05}s">
-        ${img ? `<img class="card-image" src="${img}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">` : ''}
-        <div class="card-image-placeholder" style="${img ? 'display:none' : 'display:flex'}">📰</div>
+        ${displayImg ? `<img class="card-image" src="${displayImg}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">` : ''}
+        <div class="card-image-placeholder" style="${displayImg ? 'display:none' : 'display:flex'}">📰</div>
         <div class="card-content">
           <span class="card-tag tag-news">${item.icon || '📰'} ${item.source}</span>
           <div class="card-title">${item.title}</div>
@@ -617,11 +653,13 @@ function renderTechCards(items) {
     return;
   }
   container.innerHTML = items.slice(0, 12).map((item, i) => {
-    const img = getImage(item);
+    const img = getImage(item, item.sourceUrl);
+    const favicon = getFavicon(item.sourceUrl);
+    const displayImg = img || favicon;
     return `
       <div class="card" onclick="window.open('${item.link || '#'}', '_blank')" style="animation-delay: ${i * 0.05}s">
-        ${img ? `<img class="card-image" src="${img}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">` : ''}
-        <div class="card-image-placeholder" style="${img ? 'display:none' : 'display:flex'}">💻</div>
+        ${displayImg ? `<img class="card-image" src="${displayImg}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">` : ''}
+        <div class="card-image-placeholder" style="${displayImg ? 'display:none' : 'display:flex'}">💻</div>
         <div class="card-content">
           <span class="card-tag tag-tech">${item.icon || '💻'} ${item.source}</span>
           <div class="card-title">${item.title}</div>
@@ -649,7 +687,7 @@ async function loadNews(btn) {
         const res = await withTimeout(fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`));
         const data = await res.json();
         if (data.status === 'ok' && data.items) {
-          data.items.forEach(item => allItems.push({ ...item, source: source.name, icon: source.icon }));
+          data.items.forEach(item => allItems.push({ ...item, source: source.name, icon: source.icon, sourceUrl: source.url }));
         }
       } catch (e) { console.warn(`${source.name} 失败:`, e.message); }
     }
@@ -685,7 +723,7 @@ async function loadTech(btn) {
         const res = await withTimeout(fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(source.url)}`));
         const data = await res.json();
         if (data.status === 'ok' && data.items) {
-          data.items.forEach(item => allItems.push({ ...item, source: source.name, icon: source.icon }));
+          data.items.forEach(item => allItems.push({ ...item, source: source.name, icon: source.icon, sourceUrl: source.url }));
         }
       } catch (e) { console.warn(`${source.name} 失败:`, e.message); }
     }
