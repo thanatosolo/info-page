@@ -4,8 +4,9 @@
     { "url": "https://sspai.com/feed", "name": "少数派", "icon": "✨" }
   ],
   "techSources": [
-    { "url": "https://36kr.com/feed", "name": "36氪", "icon": "📈" },
-    { "url": "https://www.huxiu.com/rss/0.xml", "name": "虎嗅", "icon": "🐯" },
+    { "url": "https://www.qbitai.com/feed", "name": "量子位", "icon": "🤖" },
+    { "url": "https://www.infoq.cn/feed", "name": "InfoQ中文", "icon": "📐" },
+    { "url": "https://www.leiphone.com/feed", "name": "雷锋网", "icon": "📰" },
     { "url": "https://www.ifanr.com/feed", "name": "爱范儿", "icon": "📱" }
   ],
   "music": {
