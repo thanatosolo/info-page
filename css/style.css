@@ -225,6 +225,12 @@ body {
 }
 .cards.masonry .card-image { height: auto !important; max-height: 400px; object-fit: cover; }
 .cards.masonry .card-image-placeholder { height: 120px !important; }
+/* 无图卡片占位符错落高度，制造瀑布流效果 */
+.cards.masonry .card:nth-child(5n+1) .card-image-placeholder { height: 170px !important; }
+.cards.masonry .card:nth-child(5n+2) .card-image-placeholder { height: 100px !important; }
+.cards.masonry .card:nth-child(5n+3) .card-image-placeholder { height: 140px !important; }
+.cards.masonry .card:nth-child(5n+4) .card-image-placeholder { height: 110px !important; }
+.cards.masonry .card:nth-child(5n) .card-image-placeholder { height: 150px !important; }
 @media (max-width: 1024px) { .cards.masonry { column-count: 2; } }
 @media (max-width: 640px) { .cards.masonry { column-count: 1; } }
 

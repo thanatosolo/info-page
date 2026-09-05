@@ -186,7 +186,7 @@ function getDomain(url) {
 
 function getFavicon(sourceUrl) {
   const domain = getDomain(sourceUrl);
-  return domain ? `https://www.google.com/s2/favicons?domain=${domain}&sz=128` : '';
+  return domain ? `https://favicon.im/${domain}` : '';
 }
 
 function getImage(item, sourceUrl) {
